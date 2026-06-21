@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة مراجعة اللغة الإنجليزية التفاعلية</title>
+  
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col">
+
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 space-x-reverse">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 animate-pulse">
+          <i class="fa-solid fa-language text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">مراجعة اللغة الإنجليزية</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">منصة تقييم وتدريب تفاعلية شاملة</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-2 space-x-reverse">
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-300 focus:outline-none" title="تغيير المظهر">
+          <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+          <i class="fa-solid fa-sun hidden dark:block text-lg"></i>
+        </button>
+        
+        <!-- Reset Progress Button -->
+        <button id="resetAppBtn" class="px-3.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold text-xs sm:text-sm transition-all duration-300 flex items-center space-x-1.5 space-x-reverse focus:outline-none border border-rose-200 dark:border-rose-900/50">
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+          <span>إعادة ضبط البيانات</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Left Sidebar (Stats & Navigation Panels) -->
+      <div class="lg:col-span-1 flex flex-col space-y-6">
+        
+        <!-- Progress Tracking Card -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+          <h2 class="text-base font-bold mb-4 flex items-center space-x-2 space-x-reverse text-slate-900 dark:text-white">
+            <i class="fa-solid fa-chart-line text-emerald-500"></i>
+            <span>مؤشرات الأداء الحالي</span>
+          </h2>
+          
+          <!-- Circular Progress representation in simplified dashboard-style -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex flex-col">
+              <span class="text-3xl font-extrabold text-emerald-500" id="progressPercent">0%</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">نسبة الإنجاز الإجمالية</span>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <i class="fa-solid fa-trophy text-xl"></i>
+            </div>
+          </div>
+          
+          <!-- Linear Progress Bar -->
+          <div class="space-y-1.5 mb-5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span id="progressBarLabel">تمت الإجابة على 0 من 0</span>
+              <span class="text-slate-400" id="progressBarPercent">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+              <div id="progressFill" class="bg-emerald-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <!-- Quick Counter Boxes -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-xl p-3 text-center transition-colors">
+              <span class="block text-2xl font-extrabold text-emerald-600 dark:text-emerald-400" id="correctCounter">0</span>
+              <span class="text-xs font-bold text-emerald-700/80 dark:text-emerald-500">إجابة صحيحة</span>
+            </div>
+            <div class="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 rounded-xl p-3 text-center transition-colors">
+              <span class="block text-2xl font-extrabold text-rose-600 dark:text-rose-400" id="wrongCounter">0</span>
+              <span class="text-xs font-bold text-rose-700/80 dark:text-rose-500">إجابة خاطئة</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Filters & Controls Card -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+          <h2 class="text-base font-bold mb-4 flex items-center space-x-2 space-x-reverse text-slate-900 dark:text-white">
+            <i class="fa-solid fa-sliders text-emerald-500"></i>
+            <span>تخصيص المراجعة</span>
+          </h2>
+          
+          <!-- Order Mode Selection -->
+          <div class="mb-4">
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">ترتيب الأسئلة</label>
+            <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-700 p-1 rounded-xl">
+              <button id="seqModeBtn" class="py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm">
+                متسلسل
+              </button>
+              <button id="randModeBtn" class="py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white">
+                عشوائي بالكامل
+              </button>
+            </div>
+          </div>
+          
+          <!-- Category Filter Selection -->
+          <div>
+            <label for="categoryFilter" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">القسم / نوع المهارة</label>
+            <div class="relative">
+              <select id="categoryFilter" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none cursor-pointer transition-all">
+                <option value="all">جميع أقسام المراجعة</option>
+                <option value="writing">الكتابة (Writing)</option>
+                <option value="grammar">القواعد (Grammar)</option>
+                <option value="vocabulary">المفردات (Vocabulary)</option>
+                <option value="match">التوصيل (Match)</option>
+                <option value="reading">القراءة وفهم النصوص (Reading)</option>
+                <option value="bookmarked">⭐ الأسئلة المفضلة المحددة</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-slate-400">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Playground (The Quiz Card) -->
+      <div class="lg:col-span-2 flex flex-col space-y-6">
+        
+        <!-- Completed Active Pool State View -->
+        <div id="completedView" class="hidden bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-lg text-center transition-colors duration-300">
+          <div class="w-20 h-20 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-500 mb-6">
+            <i class="fa-solid fa-award text-4xl"></i>
+          </div>
+          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">تهانينا! لقد أكملت القسم الحالي</h2>
+          <p class="text-slate-500 dark:text-slate-400 text-sm max-w-md mx-auto mb-6" id="completedMsg">
+            لقد تمكنت من الإجابة على جميع الأسئلة المتوفرة في هذا التصنيف بنجاح. يمكنك إعادة المحاولة أو الانتقال إلى مهارات لغوية أخرى.
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
+            <button id="restartSectionBtn" class="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse focus:outline-none shadow-md shadow-emerald-500/20">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>إعادة تشغيل القسم</span>
+            </button>
+            <button id="backToAllBtn" class="w-full sm:w-auto px-6 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-bold rounded-xl transition-all duration-300 focus:outline-none">
+              <span>عرض جميع الأسئلة</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Main Quiz Card -->
+        <div id="quizCard" class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300 min-h-[480px] flex flex-col justify-between">
+          
+          <!-- Card Header Info -->
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center space-x-2 space-x-reverse">
+                <span class="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full" id="questionCategory">
+                  جاري التحميل...
+                </span>
+                <span class="text-slate-400 dark:text-slate-500 text-xs font-semibold" id="questionNumber">
+                  السؤال 0 / 0
+                </span>
+              </div>
+              
+              <!-- Bookmark Button -->
+              <button id="bookmarkBtn" class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-400 dark:text-slate-400 hover:text-amber-500 transition-all focus:outline-none flex items-center justify-center border border-slate-100 dark:border-slate-600/50" title="أضف للمفضلة المرجعية">
+                <i class="fa-regular fa-bookmark text-base"></i>
+              </button>
+            </div>
+            
+            <!-- Question Box -->
+            <div class="mb-6">
+              <div class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-relaxed ltr animate-fade-in" id="questionText">
+                جاري تحميل محتوى السؤال المختار...
+              </div>
+            </div>
+            
+            <!-- Options Layout -->
+            <div class="space-y-3" id="optionsContainer">
+              <!-- Options loaded dynamically -->
+            </div>
+          </div>
+          
+          <!-- Explanation / Hint Panel & Footer Navigation -->
+          <div class="mt-8 space-y-6">
+            
+            <!-- Explanation & Rationale Panel (Hidden by default) -->
+            <div id="explanationPanel" class="hidden transition-all duration-300 rounded-2xl p-5 border">
+              <div class="flex items-start space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center mt-0.5" id="explanationIconContainer">
+                  <!-- Dynamic icon based on correctness -->
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-sm font-extrabold mb-1" id="explanationTitle">التحليل العلمي للسؤال</h3>
+                  <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium" id="explanationText">
+                    هذا الحقل مخصص للشرح والتفسير الإرشادي للخيارات.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Footer Navigation -->
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700/60">
+              <!-- Hint Button -->
+              <button id="hintBtn" class="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 text-amber-600 dark:text-amber-400 font-extrabold text-xs transition-all duration-300 flex items-center space-x-1.5 space-x-reverse focus:outline-none border border-amber-200/50 dark:border-amber-900/30">
+                <i class="fa-regular fa-lightbulb"></i>
+                <span>عرض تلميح</span>
+              </button>
+              
+              <!-- Next Question Button -->
+              <button id="nextBtn" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-extrabold text-sm transition-all duration-300 flex items-center space-x-2 space-x-reverse focus:outline-none disabled:cursor-not-allowed" disabled>
+                <span>السؤال التالي</span>
+                <i class="fa-solid fa-arrow-left"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-12 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold">مراجعة مادة اللغة الإنجليزية التفاعلية، "المراجعة لا تغني عن الكتاب".</p>
+      <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold mt-1">&copy; 2026 جميع الحقوق محفوظة لوزارة التعليم والمنهج المعتمد.</p>
+    </div>
+  </footer>
+
+  <!-- Custom Reset Modal Overlay -->
+  <div id="resetModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+      <div class="text-center">
+        <div class="w-14 h-14 bg-rose-100 dark:bg-rose-950/30 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+        </div>
+        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-2">هل أنت متأكد من إعادة الضبط؟</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
+          سيؤدي هذا الإجراء إلى حذف جميع سجلات التقدم الحالي، الإجابات المحفوظة، والأسئلة المفضلة بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.
+        </p>
+        <div class="flex items-center space-x-3 space-x-reverse">
+          <button id="confirmResetBtn" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl transition-all shadow-md shadow-rose-500/10">
+            نعم، احذف البيانات
+          </button>
+          <button id="cancelResetBtn" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-all">
+            تراجع
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System Container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 left-6 sm:left-auto z-50 flex flex-col space-y-3 pointer-events-none"></div>
+
+  <!-- Sound Effects / Buzzers (Simulated with Web Audio API for extreme standalone zero-dependencies correctness) -->
+  <script>
+    const soundManager = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      },
+      play(correct) {
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          
+          if (correct) {
+            osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1); // E5
+            gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.4);
+          } else {
+            osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.3);
+          }
+        } catch (e) {
+          // Silent catch if audio is blocked or unsupported
+        }
+      }
+    };
+  </script>
+
+  <!-- Complete Database Array Initialization -->
+  <script>
+    const ALL_QUESTIONS = [
+      // ==== WRITING: القطعة الأولى: Friendship is more important ====
+      {
+        id: "writing_f1_1",
+        type: "mcq",
+        category: "writing",
+        tag: "Writing - Blank 1",
+        question: `<b>Read the passage and choose the correct option for blank (1):</b><br><br>
+        "Dear Sabah,<br>
+        I am sorry you feel so <u><b>.........(1).........</b></u> about falling out with your best friend. I understand that she wanted to borrow your new .........(2)......... before you had the chance to use it yourself. But as you say, she was invited to a wedding and she could not buy a new bag. I understand that it is .........(3)........., maybe even unfair, to let someone else use something that you have just bought or been given. But surely, .........(4)......... is more important, even if it requires some .........(5)......... . So I am afraid I will agree with what you think, you should have let her borrow the bag. She would have been happy and .........(6)......... to you and you would still be on good terms with your friend."`,
+        options: ["sad", "happy", "aggressive", "outgoing"],
+        answer: "sad",
+        hint: "It expresses a feeling of sorrow regarding the conflict."
+      },
+      {
+        id: "writing_f1_2",
+        type: "mcq",
+        category: "writing",
+        tag: "Writing - Blank 2",
+        question: `<b>Read the passage and choose the correct option for blank (2):</b><br><br>
+        "Dear Sabah,<br>
+        I am sorry you feel so .........(1)......... about falling out with your best friend. I understand that she wanted to borrow your new <u><b>.........(2).........</b></u> before you had the chance to use it yourself. But as you say, she was invited to a wedding and she could not buy a new bag. I understand that it is .........(3)........., maybe even unfair, to let someone else use something that you have just bought or been given. But surely, .........(4)......... is more important, even if it requires some .........(5)......... . So I am afraid I will agree with what you think, you should have let her borrow the bag. She would have been happy and .........(6)......... to you and you would still be on good terms with your friend."`,
+        options: ["cat", "bag", "house", "pen"],
+        answer: "bag",
+        hint: "The context later mentions 'she could not buy a new bag'."
+      },
+      {
+        id: "writing_f1_3",
+        type: "mcq",
+        category: "writing",
+        tag: "Writing - Blank 3",
+        question: `<b>Read the passage and choose the correct option for blank (3):</b><br><br>
+        "Dear Sabah,<br>
+        I am sorry you feel so .........(1)......... about falling out with your best friend. I understand that she wanted to borrow your new .........(2)......... before you had the chance to use it yourself. But as you say, she was invited to a wedding and she could not buy a new bag. I understand that it is <u><b>.........(3).........</b></u>, maybe even unfair, to let someone else use something that you have just bought or been given. But surely, .........(4)......... is more important, even if it requires some .........(5)......... . So I am afraid I will agree with what you think, you should have let her borrow the bag. She would have been happy and .........(6)......... to you and you would still be on good terms with your friend."`,
+        options: ["annoy", "quickly", "difficult", "easy"],
+        answer: "difficult",
+        hint: "It means hard or not easy to let someone use your new item."
+      },
+      {
+        id: "writing_f1_4",
+        type: "mcq",
+        category: "writing",
+        tag: "Writing - Blank 4",
+        question: `<b>Read the passage and choose the correct option for blank (4):</b><br><br>
+        "Dear Sabah,<br>
+        I am sorry you feel so .........(1)......... about falling out with your best friend. I understand that she wanted to borrow your new .........(2)......... before you had the chance to use it yourself. But as you say, she was invited to a wedding and she could not buy a new bag. I understand that it is .........(3)........., maybe even unfair, to let someone else use something that you have just bought or been given. But surely, <u><b>.........(4).........</b></u> is more important, even if it requires some .........(5)......... . So I am afraid I will agree with what you think, you should have let her borrow the bag. She would have been happy and .........(6)......... to you and you would still be on good terms with your friend."`,
+        options: ["parent", "room", "relative", "friendship"],
+        answer: "friendship",
+        hint: "The letter discusses her relationship with her 'best friend'."
+      },
+      {
+        id: "writing_f1_5",
+        type: "mcq",
+        category: "writing",
+        tag: "Writing - Blank 5",
+        question: `<b>Read the passage and choose the correct option for blank (5):</b><br><br>
+        "Dear Sabah,<br>
+        I am sorry you feel so .........(1)......... about falling out with your best friend. I understand that she wanted to borrow your new .........(2)......... before you had the chance to use it yourself. But as you say, she was invited to a wedding and she could not buy a new bag. I understand that it is .........(3)........., maybe even unfair, to let someone else use something that you have just bought or been given. But surely, .........(4)......... is more important, even if it requires some <u><b>.........(5).........</b></u> . So I am afraid I will agree with what you think, you should have let her borrow the bag. She would have been happy and .........(6)......... to you and you would still be on good terms with your friend."`,
+        options: ["meal", "swear", "sacrifices", "gift"],
+        answer: "sacrifices",
+        hint: "Friendship requires giving up some things for others."
+      },
+      {
+        id: "writing_f1_6",
+        type: "mcq",
+        category: "writing",
+        tag: "Writing - Blank 6",
+        question: `<b>Read the passage and choose the correct option for blank (6):</b><br><br>
+        "Dear Sabah,<br>
+        I am sorry you feel so .........(1)......... about falling out with your best friend. I understand that she wanted to borrow your new .........(2)......... before you had the chance to use it yourself. But as you say, she was invited to a wedding and she could not buy a new bag. I understand that it is .........(3)........., maybe even unfair, to let someone else use something that you have just bought or been given. But surely, .........(4)......... is more important, even if it requires some .........(5)......... . So I am afraid I will agree with what you think, you should have let her borrow the bag. She would have been happy and <u><b>.........(6).........</b></u> to you and you would still be on good terms with your friend."`,
+        options: ["careful", "grateful", "useful", "dream"],
+        answer: "grateful",
+        hint: "She would feel thankful to her friend."
+      },
+
+      // ==== WRITING: القطعة الثانية: رسالة شكوى (Complaint Letter) ====
+      {
+        id: "writing_f2_1",
+        type: "mcq",
+        category: "writing",
+        tag: "Complaint Letter - Blank 1",
+        question: `<b>Read the passage and choose the correct option for blank (1):</b><br><br>
+        "Dear Sir,<br>
+        I purchased a set of <u><b>………(1)……..</b></u> at your store three days ago. According to your promotional material, any item that is faulty and is returned within ……(2)…….., is fully refunded and a discount voucher is offered for future purchases, as a courtesy to ……(3)…….<br>
+        I attempted to use my earphones the day I purchased them and found out that one of the ……(4)…….. had not been connected. I therefore, called your Customer ……(5)…….. Department and was advised to ……(6)……. the earphones as soon as possible."`,
+        options: ["earphones", "phone", "car", "DNA"],
+        answer: "earphones",
+        hint: "Later in the paragraph, it specifies 'I attempted to use my earphones'."
+      },
+      {
+        id: "writing_f2_2",
+        type: "mcq",
+        category: "writing",
+        tag: "Complaint Letter - Blank 2",
+        question: `<b>Read the passage and choose the correct option for blank (2):</b><br><br>
+        "Dear Sir,<br>
+        I purchased a set of ………(1)…….. at your store three days ago. According to your promotional material, any item that is faulty and is returned within <u><b>……(2)……..</b></u>, is fully refunded and a discount voucher is offered for future purchases, as a courtesy to ……(3)…….<br>
+        I attempted to use my earphones the day I purchased them and found out that one of the ……(4)…….. had not been connected. I therefore, called your Customer ……(5)…….. Department and was advised to ……(6)……. the earphones as soon as possible."`,
+        options: ["for ever", "24 hours", "century", "2 pm"],
+        answer: "24 hours",
+        hint: "Standard short timeframe for return policies."
+      },
+      {
+        id: "writing_f2_3",
+        type: "mcq",
+        category: "writing",
+        tag: "Complaint Letter - Blank 3",
+        question: `<b>Read the passage and choose the correct option for blank (3):</b><br><br>
+        "Dear Sir,<br>
+        I purchased a set of ………(1)…….. at your store three days ago. According to your promotional material, any item that is faulty and is returned within ……(2)…….., is fully refunded and a discount voucher is offered for future purchases, as a courtesy to <u><b>……(3)…….</b></u><br>
+        I attempted to use my earphones the day I purchased them and found out that one of the ……(4)…….. had not been connected. I therefore, called your Customer ……(5)…….. Department and was advised to ……(6)……. the earphones as soon as possible."`,
+        options: ["the teacher", "the player", "the customer", "the mother"],
+        answer: "the customer",
+        hint: "A store offers discount vouchers to their buyers."
+      },
+      {
+        id: "writing_f2_4",
+        type: "mcq",
+        category: "writing",
+        tag: "Complaint Letter - Blank 4",
+        question: `<b>Read the passage and choose the correct option for blank (4):</b><br><br>
+        "Dear Sir,<br>
+        I purchased a set of ………(1)…….. at your store three days ago. According to your promotional material, any item that is faulty and is returned within ……(2)…….., is fully refunded and a discount voucher is offered for future purchases, as a courtesy to ……(3)…….<br>
+        I attempted to use my earphones the day I purchased them and found out that one of the <u><b>……(4)……..</b></u> had not been connected. I therefore, called your Customer ……(5)…….. Department and was advised to ……(6)……. the earphones as soon as possible."`,
+        options: ["rooms", "sides", "pipes", "cables"],
+        answer: "cables",
+        hint: "Refers to the physical wiring/cords of the earphones."
+      },
+      {
+        id: "writing_f2_5",
+        type: "mcq",
+        category: "writing",
+        tag: "Complaint Letter - Blank 5",
+        question: `<b>Read the passage and choose the correct option for blank (5):</b><br><br>
+        "Dear Sir,<br>
+        I purchased a set of ………(1)…….. at your store three days ago. According to your promotional material, any item that is faulty and is returned within ……(2)…….., is fully refunded and a discount voucher is offered for future purchases, as a courtesy to ……(3)…….<br>
+        I attempted to use my earphones the day I purchased them and found out that one of the ……(4)…….. had not been connected. I therefore, called your Customer <u><b>……(5)……..</b></u> Department and was advised to ……(6)……. the earphones as soon as possible."`,
+        options: ["Table", "City", "Service", "Sensor"],
+        answer: "Service",
+        hint: "Department handling buyer inquiries and complaints."
+      },
+      {
+        id: "writing_f2_6",
+        type: "mcq",
+        category: "writing",
+        tag: "Complaint Letter - Blank 6",
+        question: `<b>Read the passage and choose the correct option for blank (6):</b><br><br>
+        "Dear Sir,<br>
+        I purchased a set of ………(1)…….. at your store three days ago. According to your promotional material, any item that is faulty and is returned within ……(2)…….., is fully refunded and a discount voucher is offered for future purchases, as a courtesy to ……(3)…….<br>
+        I attempted to use my earphones the day I purchased them and found out that one of the ……(4)…….. had not been connected. I therefore, called your Customer ……(5)…….. Department and was advised to <u><b>……(6)…….</b></u> the earphones as soon as possible."`,
+        options: ["replay", "return", "record", "anyway"],
+        answer: "return",
+        hint: "To send back the faulty product to obtain a refund."
+      },
+
+      // ==== GRAMMAR ====
+      {
+        id: "gram_1",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Past Perfect",
+        question: "I felt much better after I had____________ the results of my test.",
+        options: ["see", "saw", "seen", "seeing"],
+        answer: "seen",
+        hint: "Past Perfect is formed using had + Past Participle (V3)."
+      },
+      {
+        id: "gram_2",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Passive Infinitive",
+        question: "I think the starter needs to be ___________.",
+        options: ["repair", "repaired", "repairing", "repairs"],
+        answer: "repaired",
+        hint: "Passive structure: 'needs to be + Past Participle (V3)'."
+      },
+      {
+        id: "gram_3",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Modals of Deduction",
+        question: "You haven’t eaten all day. You ____________ be starving.",
+        options: ["must", "musted", "mustn't", "could"],
+        answer: "must",
+        hint: "Use 'must' for strong logical positive deduction."
+      },
+      {
+        id: "gram_4",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Verbs + Gerund",
+        question: "The children hate ________ their ice cream .",
+        options: ["shared", "shares", "share", "sharing"],
+        answer: "sharing",
+        hint: "The verb 'hate' is followed by a gerund (-ing)."
+      },
+      {
+        id: "gram_5",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Passive",
+        question: "The battery might be low. It probably needs to be________.",
+        options: ["recharging", "recharges", "recharge", "recharged"],
+        answer: "recharged",
+        hint: "Needs to be + Past Participle (V3)."
+      },
+      {
+        id: "ch5_q6_gram", // Avoid collision
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Pronouns",
+        question: "The car windscreen is cracked. Please can you fix ___ .",
+        options: ["it", "you", "them", "his"],
+        answer: "it",
+        hint: "Pronoun referring to the singular noun 'windscreen'."
+      },
+      {
+        id: "gram_7",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Verbs + Gerund",
+        question: "She can't stand ___________ the house.",
+        options: ["cleans", "cleaning", "clean", "cleaned"],
+        answer: "cleaning",
+        hint: "The expression 'can't stand' is followed by a gerund (-ing)."
+      },
+      {
+        id: "gram_8",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Past Perfect",
+        question: "It had been raining, but by the time we arrived, the rain had_________.",
+        options: ["stopping", "stop", "stopped", "stops"],
+        answer: "stopped",
+        hint: "Past Perfect 'had + Past Participle (stopped)'."
+      },
+      {
+        id: "gram_9",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Object Pronouns",
+        question: "Sandra is never on time. The teacher's going to tell _____to be more punctual.",
+        options: ["her", "his", "them", "us"],
+        answer: "her",
+        hint: "Pronoun referring to Sandra (female singular object)."
+      },
+      {
+        id: "gram_10",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Modals of Deduction",
+        question: "Pat's joking. She _______ be serious.",
+        options: ["have", "could", "must", "can't"],
+        answer: "can't",
+        hint: "Use 'can't' for a strong negative logical deduction."
+      },
+      {
+        id: "gram_11",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Requests",
+        question: "Ahmad, ___________ you help me with this box, please ?",
+        options: ["is", "can", "does", "I"],
+        answer: "can",
+        hint: "Modal 'can' is used for requests."
+      },
+      {
+        id: "gram_12",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Modals in Past",
+        question: "Brad should have _________ an extra key.",
+        options: ["hasing", "have", "has", "had"],
+        answer: "had",
+        hint: "'should have + Past Participle (V3)'."
+      },
+      {
+        id: "gram_13",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Negative Questions",
+        question: "____________ you going to help ?",
+        options: ["Aren't", "Isn't", "Doesn't", "Hasn't"],
+        answer: "Aren't",
+        hint: "Negative question matching 'you' in present continuous / going to."
+      },
+      {
+        id: "gram_14",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Ability",
+        question: "We ________ meet tomorrow afternoon.",
+        options: ["does", "am", "can't", "is"],
+        answer: "can't",
+        hint: "Expressing inability/impossibility."
+      },
+      {
+        id: "gram_15",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Modals in Past",
+        question: "Jan shouldn't have _______ April some money.",
+        options: ["lends", "lend", "lending", "lent"],
+        answer: "lent",
+        hint: "'shouldn't have + Past Participle (lent)'."
+      },
+      {
+        id: "gram_16",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Negative Questions",
+        question: "_______ you want to know what happened ?",
+        options: ["Don't", "Isn't", "Doesn't", "Hasn't"],
+        answer: "Don't",
+        hint: "Negative question auxiliary for 'you'."
+      },
+      {
+        id: "gram_17",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Quantifiers",
+        question: "Are there _____ sport facilities?",
+        options: ["no", "any", "some", "the"],
+        answer: "any",
+        hint: "Quantifier commonly used in questions."
+      },
+      {
+        id: "gram_18",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Base Form",
+        question: "Can I ________ you , sir ?",
+        options: ["is", "size", "am", "help"],
+        answer: "help",
+        hint: "Base verb following the modal 'Can'."
+      },
+      {
+        id: "gram_19",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Used to",
+        question: "When my grandfather was young, he didn't use to _____________ computer.",
+        options: ["have", "had", "having", "haves"],
+        answer: "have",
+        hint: "'didn't use to + base verb'."
+      },
+      {
+        id: "gram_20",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Conjunctions",
+        question: "____________ Steve had all the right qualifications, he wasn’t chosen for the job.",
+        options: ["Spite of", "In spite of", "Also", "Although"],
+        answer: "Although",
+        hint: "Concession clause connector followed by a subject + verb."
+      },
+      {
+        id: "gram_21",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Conjunctions",
+        question: "____________ her busy schedule, Maya always remembers her friends’ events.",
+        options: ["Out", "Although", "in spite of", "Even though"],
+        answer: "in spite of",
+        hint: "Connector indicating contrast followed directly by a noun phrase."
+      },
+      {
+        id: "gram_22",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Used to",
+        question: "People _______ speak to people on a phone that was fixed to the wall of the house.",
+        options: ["used to", "has to", "use to", "doesn't use to"],
+        answer: "used to",
+        hint: "Refers to past habits or discontinued states."
+      },
+      {
+        id: "gram_23",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Plurals",
+        question: "The plural of company : ___________",
+        options: ["company", "companyes", "companies", "companys"],
+        answer: "companies",
+        hint: "Drop the 'y' and add 'ies' if preceded by a consonant."
+      },
+      {
+        id: "gram_24",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Conditionals",
+        question: "If I had more experience, I’d __________ for the job.",
+        options: ["applied", "applys", "appling", "apply"],
+        answer: "apply",
+        hint: "Second Conditional: 'would (I'd) + base verb'."
+      },
+      {
+        id: "gram_25",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Conditionals",
+        question: "If I saw someone who was stealing in a store, I would ____________ the police.",
+        options: ["called", "calls", "calling", "call"],
+        answer: "call",
+        hint: "Second Conditional: 'would + base verb'."
+      },
+      {
+        id: "gram_26",
+        type: "mcq",
+        category: "grammar",
+        tag: "Grammar - Quantifiers",
+        question: "There is _________ pollution.",
+        options: ["some", "any", "something", "in"],
+        answer: "some",
+        hint: "Positive quantifier used with uncountable nouns."
+      },
+
+      // ==== VOCABULARY ====
+      {
+        id: "vocab_1",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Expressions",
+        question: "It sounds like =",
+        options: ["It is this way", "It doesn't be", "It seems to be", "It's Monday"],
+        answer: "It seems to be",
+        hint: "Refers to a deduction based on evidence."
+      },
+      {
+        id: "vocab_2",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Description",
+        question: "This sleeve is _________ .",
+        options: ["filthy", "torn", "leak", "dead"],
+        answer: "torn",
+        hint: "Ripped or pulled apart."
+      },
+      {
+        id: "vocab_3",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Definitions",
+        question: "remote =",
+        options: ["through", "next to", "near", "far away"],
+        answer: "far away",
+        hint: "Distant or separated by a wide space."
+      },
+      {
+        id: "vocab_4",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Damage",
+        question: "The window is __________ .",
+        options: ["flat", "no signal", "dripping", "broken"],
+        answer: "broken",
+        hint: "Shattered or fractured."
+      },
+      {
+        id: "vocab_5",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Condition",
+        question: "The walls are _________ .",
+        options: ["filthy", "dead", "torn", "healthy"],
+        answer: "filthy",
+        hint: "Extremely dirty or nasty."
+      },
+      {
+        id: "vocab_6",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Idioms",
+        question: "You never know =",
+        options: ["anything is possible", "impossible", "never", "misunderstand"],
+        answer: "anything is possible",
+        hint: "Expressing that anything could happen."
+      },
+      {
+        id: "vocab_7",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Slang",
+        question: "beats me =",
+        options: ["Ok", "I'm good", "I know", "I have no idea"],
+        answer: "I have no idea",
+        hint: "Idiomatic expression of not knowing."
+      },
+      {
+        id: "vocab_8",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Verbs",
+        question: "bother =",
+        options: ["walk", "make happy", "make the effort"],
+        answer: "make the effort",
+        hint: "To take the trouble to do something."
+      },
+      {
+        id: "vocab_9",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Nouns",
+        question: "proof =",
+        options: ["asset", "evidence", "intelligent", "candidate"],
+        answer: "evidence",
+        hint: "Factual support for a theory or claim."
+      },
+      {
+        id: "vocab_10",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Nouns",
+        question: "hoax =",
+        options: ["believe", "good plan", "max", "trick"],
+        answer: "trick",
+        hint: "A humorous or malicious deception."
+      },
+      {
+        id: "vocab_11",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Verbs",
+        question: "The doctors _________ his head and found nothing.",
+        options: ["scanned", "bother", "can", "cover"],
+        answer: "scanned",
+        hint: "Imaged or examined medical records."
+      },
+      {
+        id: "vocab_12",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Idioms",
+        question: "have one’s mind set on something =",
+        options: ["be firmly decided", "new topic", "be careful", "take care"],
+        answer: "be firmly decided",
+        hint: "Determined to achieve or get something."
+      },
+      {
+        id: "vocab_13",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Verbs",
+        question: "let someone down =",
+        options: ["walk", "ready", "very nice", "disappoint"],
+        answer: "disappoint",
+        hint: "Fail to support or satisfy someone."
+      },
+      {
+        id: "vocab_14",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Slang",
+        question: "No way =",
+        options: ["no comment", "say yes to yous", "not allow something"],
+        answer: "not allow something",
+        hint: "Absolutely not or impossible."
+      },
+      {
+        id: "vocab_15",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Idioms",
+        question: "Be straight =",
+        options: ["lie", "be honest", "say bad", "of course"],
+        answer: "be honest",
+        hint: "Be direct, truthful and candid."
+      },
+      {
+        id: "vocab_16",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Pronouns",
+        question: "this guy =",
+        options: ["this person", "this place", "this thing", "those"],
+        answer: "this person",
+        hint: "Casual slang for a male individual."
+      },
+      {
+        id: "vocab_17",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Expressions",
+        question: "to me =",
+        options: ["in time", "nothing", "in my opinion", "this one"],
+        answer: "in my opinion",
+        hint: "From my point of view."
+      },
+      {
+        id: "vocab_18",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Verbs",
+        question: "hurl =",
+        options: ["through", "laugh", "collect", "throw"],
+        answer: "throw",
+        hint: "To fling or cast violently."
+      },
+      {
+        id: "vocab_19",
+        type: "mcq",
+        category: "vocabulary",
+        tag: "Vocabulary - Compound Nouns",
+        question: "distracted driver =",
+        options: ["looking to the road", "not pay attention", "be careful", "take care"],
+        answer: "not pay attention",
+        hint: "A motorist who is not focused on the road."
+      },
+
+      // ==== MATCH (Updated with dedicated 'match' type and key 'phrase') ====
+      {
+        id: "match_1",
+        type: "match",
+        category: "match",
+        tag: "Match Terms",
+        phrase: "Yes, please, if you could",
+        question: "Match the term to its meaning.",
+        options: [
+          "polite way to respond to an offer.",
+          "anything is possible.",
+          "used to confirm what someone else has said.",
+          "used to make statement stronger."
+        ],
+        answer: "polite way to respond to an offer.",
+        hint: "An accepting polite response."
+      },
+      {
+        id: "match_2",
+        type: "match",
+        category: "match",
+        tag: "Match Terms",
+        phrase: "You never know",
+        question: "Match the term to its meaning.",
+        options: [
+          "polite way to respond to an offer.",
+          "anything is possible.",
+          "used to confirm what someone else has said.",
+          "used to make statement stronger."
+        ],
+        answer: "anything is possible.",
+        hint: "Anything can happen."
+      },
+      {
+        id: "match_3",
+        type: "match",
+        category: "match",
+        tag: "Match Terms",
+        phrase: "You mean",
+        question: "Match the term to its meaning.",
+        options: [
+          "polite way to respond to an offer.",
+          "anything is possible.",
+          "used to confirm what someone else has said.",
+          "used to make statement stronger."
+        ],
+        answer: "used to confirm what someone else has said.",
+        hint: "Clarifying statement."
+      },
+      {
+        id: "match_4",
+        type: "match",
+        category: "match",
+        tag: "Match Terms",
+        phrase: "Really",
+        question: "Match the term to its meaning.",
+        options: [
+          "polite way to respond to an offer.",
+          "anything is possible.",
+          "used to confirm what someone else has said.",
+          "used to make statement stronger."
+        ],
+        answer: "used to make statement stronger.",
+        hint: "Emphasizer."
+      },
+      {
+        id: "match_5",
+        type: "match",
+        category: "match",
+        tag: "Match Terms",
+        phrase: "It sounds like",
+        options: [
+          "it seems to be.",
+          "an exclamation to express surprise",
+          "constantly checking.",
+          "a statement with the final event or result"
+        ],
+        answer: "it seems to be.",
+        hint: "Deduction helper."
+      },
+      {
+        id: "match_6",
+        type: "match",
+        category: "match",
+        tag: "Match Terms",
+        phrase: "Gee!",
+        question: "Match the term to its meaning.",
+        options: [
+          "it seems to be.",
+          "an exclamation to express surprise",
+          "constantly checking.",
+          "a statement with the final event or result"
+        ],
+        answer: "an exclamation to express surprise",
+        hint: "An informal exclamation."
+      },
+      {
+        id: "match_7",
+        type: "match",
+        category: "match",
+        tag: "Match Terms",
+        phrase: "breathing down someone's neck",
+        question: "Match the term to its meaning.",
+        options: [
+          "it seems to be.",
+          "an exclamation to express surprise",
+          "constantly checking.",
+          "a statement with the final event or result"
+        ],
+        answer: "constantly checking.",
+        hint: "Watching very closely."
+      },
+      {
+        id: "match_8",
+        type: "match",
+        category: "match",
+        tag: "Match Terms",
+        phrase: "in the end",
+        question: "Match the term to its meaning.",
+        options: [
+          "it seems to be.",
+          "an exclamation to express surprise",
+          "constantly checking.",
+          "a statement with the final event or result"
+        ],
+        answer: "a statement with the final event or result",
+        hint: "The final resolution."
+      },
+
+      // ==== READING ====
+      // أولاً: نص Quotes, Quotes
+      {
+        id: "read_q1",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - Quotes",
+        question: `<b>Based on the passage "Quotes, Quotes", is this statement True (T) or False (F)?</b><br><br>
+        <i>Robert Frost said half the people in the world don’t say what they want to say.</i>`,
+        options: ["T", "F"],
+        answer: "F",
+        hint: "Robert Frost spoke of those who have something to say and can't, and those with nothing to say who keep talking."
+      },
+      {
+        id: "read_q2",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - Quotes",
+        question: `<b>Based on the passage "Quotes, Quotes", is this statement True (T) or False (F)?</b><br><br>
+        <i>Gates believed that more than 640K memory was unnecessary.</i>`,
+        options: ["T", "F"],
+        answer: "T",
+        hint: "Bill Gates is quoted as saying '640K ought to be enough for anybody.'"
+      },
+      {
+        id: "read_q3",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - Quotes",
+        question: `<b>Based on the passage "Quotes, Quotes", is this statement True (T) or False (F)?</b><br><br>
+        <i>Jane Austen thought that people had no sympathy for those who complain.</i>`,
+        options: ["T", "F"],
+        answer: "F",
+        hint: "She wrote 'Those who do not complain are never pitied.'"
+      },
+      {
+        id: "read_q4",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - Quotes",
+        question: `<b>Based on the passage "Quotes, Quotes", is this statement True (T) or False (F)?</b><br><br>
+        <i>Mark Twain said that people shouldn’t let formal education stop them from learning.</i>`,
+        options: ["T", "F"],
+        answer: "T",
+        hint: "Mark Twain wrote 'Never let formal education get in the way of your learning.'"
+      },
+      {
+        id: "read_q5",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - Quotes",
+        question: `<b>Based on the passage "Quotes, Quotes", is this statement True (T) or False (F)?</b><br><br>
+        <i>De Gaulle thought that it was easy to govern France because people wanted the same thing.</i>`,
+        options: ["T", "F"],
+        answer: "F",
+        hint: "He asked how one can govern a nation with 246 different kinds of cheese."
+      },
+      {
+        id: "read_q6",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - Quotes",
+        question: `<b>Based on the passage "Quotes, Quotes", is this statement True (T) or False (F)?</b><br><br>
+        <i>Helen Keller said that having no insight or understanding was worse than being blind.</i>`,
+        options: ["T", "F"],
+        answer: "T",
+        hint: "She wrote 'It is a terrible thing to see and have no vision.'"
+      },
+
+      // ثانياً: نص From smoke Signals to Email: Keeping in Touch
+      {
+        id: "read_e1",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - History of Touch",
+        question: `<b>Based on the passage "From smoke Signals to Email", is this statement True (T) or False (F)?</b><br><br>
+        <i>People have shown a need to communicate with one another since the stone age</i>`,
+        options: ["T", "F"],
+        answer: "T",
+        hint: "The first sentence says 'From the Stone Age to the present, people have shown a desire to send messages...'"
+      },
+      {
+        id: "read_e2",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - History of Touch",
+        question: `<b>Based on the passage "From smoke Signals to Email", is this statement True (T) or False (F)?</b><br><br>
+        <i>When Native Americans saw two columns of smoke, it was to say Hi.</i>`,
+        options: ["T", "F"],
+        answer: "F",
+        hint: "The passage notes smoke was for signal codes like the successful return of a war party, not simply 'Hi'."
+      },
+      {
+        id: "read_e3",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - History of Touch",
+        question: `<b>Based on the passage "From smoke Signals to Email", is this statement True (T) or False (F)?</b><br><br>
+        <i>A few of non-natives can understand the drum language.</i>`,
+        options: ["T", "F"],
+        answer: "T",
+        hint: "The text says 'although few who are not natives have been able to understand it'."
+      },
+      {
+        id: "read_e4",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - History of Touch",
+        question: `<b>Based on the passage "From smoke Signals to Email", is this statement True (T) or False (F)?</b><br><br>
+        <i>Tomlinson sent his first message in 1917.</i>`,
+        options: ["T", "F"],
+        answer: "F",
+        hint: "The text states 'The first email message took place in 1971'."
+      },
+      {
+        id: "read_e5",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - History of Touch",
+        question: `<b>Based on the passage "From smoke Signals to Email", is this statement True (T) or False (F)?</b><br><br>
+        <i>By the end of the 20th century there were 263 million email boxes.</i>`,
+        options: ["T", "F"],
+        answer: "T",
+        hint: "The passage confirms: 'by the end of the 20th century, there were 263 million email boxes'."
+      },
+      {
+        id: "read_e6",
+        type: "mcq",
+        category: "reading",
+        tag: "Reading - History of Touch",
+        question: `<b>Based on the passage "From smoke Signals to Email", is this statement True (T) or False (F)?</b><br><br>
+        <i>Nowadays, few people are used to being in constant touch with people who are long distances away.</i>`,
+        options: ["T", "F"],
+        answer: "F",
+        hint: "With cell phones and text messaging, people are in constant touch frequently, not 'few'."
+      }
+    ];
+  </script>
+
+  <!-- Fully Fledged Pure Vanilla JS Application Controller Engine -->
+  <script>
+    // Local state for interactive matchmaking
+    let currentRenderedQuestionId = null;
+    let colASelected = false;
+
+    // Application State Management Object
+    const appState = {
+      currentIndex: 0,
+      correctCount: 0,
+      wrongCounter: 0,
+      activeCategory: "all", // Filter selector value
+      isRandomMode: false,
+      answeredMap: {}, // To track user answers per question ID
+      bookmarks: [], // Question IDs array
+      activePool: [], // Currently filtered questions array
+      
+      save() {
+        localStorage.setItem("ecology_quiz_progress_v2", JSON.stringify({
+          currentIndex: this.currentIndex,
+          correctCount: this.correctCount,
+          wrongCounter: this.wrongCounter,
+          activeCategory: this.activeCategory,
+          isRandomMode: this.isRandomMode,
+          answeredMap: this.answeredMap,
+          bookmarks: this.bookmarks
+        }));
+      },
+      
+      load() {
+        const data = localStorage.getItem("ecology_quiz_progress_v2");
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            this.currentIndex = parsed.currentIndex || 0;
+            this.correctCount = parsed.correctCount || 0;
+            this.wrongCounter = parsed.wrongCounter || 0;
+            this.activeCategory = parsed.activeCategory || "all";
+            this.isRandomMode = !!parsed.isRandomMode;
+            this.answeredMap = parsed.answeredMap || {};
+            this.bookmarks = parsed.bookmarks || [];
+          } catch (e) {
+            this.reset();
+          }
+        }
+      },
+      
+      reset() {
+        this.currentIndex = 0;
+        this.correctCount = 0;
+        this.wrongCounter = 0;
+        this.activeCategory = "all";
+        this.isRandomMode = false;
+        this.answeredMap = {};
+        this.bookmarks = [];
+        this.save();
+      }
+    };
+
+    // UI Toast Notification Helper Engine
+    function showToast(message, type = 'info') {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "p-4 rounded-xl shadow-lg border text-xs sm:text-sm font-extrabold flex items-center space-x-2 space-x-reverse transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white";
+      
+      let icon = '<i class="fa-solid fa-info text-blue-500"></i>';
+      if (type === 'success') {
+        icon = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+      } else if (type === 'warning') {
+        icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+      } else if (type === 'danger') {
+        icon = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+      }
+      
+      toast.innerHTML = `
+        <div class="flex-shrink-0">${icon}</div>
+        <div class="flex-1">${message}</div>
+      `;
+      
+      container.appendChild(toast);
+      
+      // Animate entry
+      setTimeout(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      }, 50);
+      
+      // Auto Dismiss after 3s
+      setTimeout(() => {
+        toast.classList.add("translate-y-2", "opacity-0");
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+
+    // Translate database categories nicely
+    function getCategoryName(val) {
+      switch (val) {
+        case "writing": return "الكتابة (Writing)";
+        case "grammar": return "القواعد (Grammar)";
+        case "vocabulary": return "المفردات (Vocabulary)";
+        case "match": return "التوصيل (Match)";
+        case "reading": return "القراءة وفهم النصوص (Reading)";
+        default: return "مراجعة عامة";
+      }
+    }
+
+    // Durstenfeld Shuffle algorithm for randomizing without state distortion
+    function shuffleArray(array) {
+      const arrCopy = [...array];
+      for (let i = arrCopy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arrCopy[i], arrCopy[j]] = [arrCopy[j], arrCopy[i]];
+      }
+      return arrCopy;
+    }
+
+    // Build Active Pool of questions based on filters
+    function prepareActivePool() {
+      let filtered = [];
+      if (appState.activeCategory === "all") {
+        filtered = [...ALL_QUESTIONS];
+      } else if (appState.activeCategory === "bookmarked") {
+        filtered = ALL_QUESTIONS.filter(q => appState.bookmarks.includes(q.id));
+      } else {
+        filtered = ALL_QUESTIONS.filter(q => q.category === appState.activeCategory);
+      }
+      
+      if (appState.isRandomMode) {
+        appState.activePool = shuffleArray(filtered);
+      } else {
+        appState.activePool = filtered;
+      }
+      
+      // Sanity checks on index boundaries
+      if (appState.currentIndex >= appState.activePool.length) {
+        appState.currentIndex = 0;
+      }
+    }
+
+    // Primary UI Render loop
+    function renderApp() {
+      // Stats updating
+      const totalInPool = appState.activePool.length;
+      
+      // Correctly computed totals based on answered Map in the active pool
+      let answeredCount = 0;
+      appState.activePool.forEach(q => {
+        if (appState.answeredMap[q.id] !== undefined) {
+          answeredCount++;
+        }
+      });
+      
+      const progressPercent = totalInPool > 0 ? Math.round((answeredCount / totalInPool) * 100) : 0;
+      
+      document.getElementById("progressPercent").innerText = progressPercent + "%";
+      document.getElementById("progressBarPercent").innerText = progressPercent + "%";
+      document.getElementById("progressBarLabel").innerText = `تمت الإجابة على ${answeredCount} من ${totalInPool}`;
+      document.getElementById("progressFill").style.width = progressPercent + "%";
+      
+      document.getElementById("correctCounter").innerText = appState.correctCount;
+      document.getElementById("wrongCounter").innerText = appState.wrongCounter;
+      
+      // Empty State/Completion view check
+      const quizCard = document.getElementById("quizCard");
+      const completedView = document.getElementById("completedView");
+      
+      if (totalInPool === 0) {
+        quizCard.classList.add("hidden");
+        completedView.classList.remove("hidden");
+        
+        if (appState.activeCategory === "bookmarked") {
+          document.getElementById("completedMsg").innerText = "لا يوجد أي أسئلة مضافة في قائمتك المفضلة المرجعية حالياً. تصفح الفصول وأضف بعض الأسئلة باستخدام أيقونة العلامة المرجعية.";
+          document.getElementById("restartSectionBtn").classList.add("hidden");
+        } else {
+          document.getElementById("completedMsg").innerText = "لم يتم العثور على أسئلة في الفئة المحددة حالياً.";
+          document.getElementById("restartSectionBtn").classList.add("hidden");
+        }
+        return;
+      } else {
+        document.getElementById("restartSectionBtn").classList.remove("hidden");
+      }
+      
+      // If completed section fully
+      if (answeredCount === totalInPool && totalInPool > 0 && appState.currentIndex >= totalInPool) {
+        quizCard.classList.add("hidden");
+        completedView.classList.remove("hidden");
+        document.getElementById("completedMsg").innerText = "رائع جداً! لقد أكملت الإجابة على جميع الأسئلة المتوفرة في هذا القسم بنجاح تام.";
+        return;
+      } else {
+        quizCard.classList.remove("hidden");
+        completedView.classList.add("hidden");
+      }
+      
+      // Load current question safely
+      const q = appState.activePool[appState.currentIndex];
+      if (!q) {
+        appState.currentIndex = 0;
+        renderApp();
+        return;
+      }
+
+      // Safe state resetting on question transition
+      if (currentRenderedQuestionId !== q.id) {
+        currentRenderedQuestionId = q.id;
+        colASelected = false;
+      }
+      
+      // Set Header Tags
+      document.getElementById("questionCategory").innerText = getCategoryName(q.category);
+      document.getElementById("questionNumber").innerText = `السؤال ${appState.currentIndex + 1} / ${totalInPool}`;
+      
+      // Handle Bookmark State representation
+      const isBookmarked = appState.bookmarks.includes(q.id);
+      const bookmarkBtn = document.getElementById("bookmarkBtn");
+      if (isBookmarked) {
+        bookmarkBtn.innerHTML = '<i class="fa-solid fa-bookmark text-amber-500"></i>';
+        bookmarkBtn.title = "محذوف من المفضلة";
+      } else {
+        bookmarkBtn.innerHTML = '<i class="fa-regular fa-bookmark"></i>';
+        bookmarkBtn.title = "أضف للمفردات المفضلة المرجعية";
+      }
+      
+      const optionsContainer = document.getElementById("optionsContainer");
+      optionsContainer.innerHTML = "";
+      
+      const savedUserAnswer = appState.answeredMap[q.id];
+      const isAnswered = savedUserAnswer !== undefined;
+
+      // Handle custom interactive match questions template
+      if (q.type === "match") {
+        document.getElementById("questionText").innerHTML = `
+          <div class="text-slate-800 dark:text-slate-100 text-sm sm:text-base font-extrabold mb-2" style="direction: rtl; text-align: right;">
+            قم بتحديد العبارة من القائمة <span class="text-blue-500 font-black">A</span> بالضغط عليها، ثم اختر المعنى المقابل الصحيح من القائمة <span class="text-emerald-500 font-black">B</span>:
+          </div>
+        `;
+
+        // Render Column A and Column B containers
+        const grid = document.createElement("div");
+        grid.className = "grid grid-cols-1 md:grid-cols-9 gap-4 w-full items-stretch";
+        grid.style.direction = "ltr";
+        grid.style.textAlign = "left";
+
+        // Column A layout
+        const colAWrapper = document.createElement("div");
+        colAWrapper.className = "col-span-1 md:col-span-4 flex flex-col justify-start space-y-2";
+        colAWrapper.innerHTML = `<span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Column A (Phrases)</span>`;
+
+        const buttonA = document.createElement("button");
+        buttonA.id = "matchColA";
+        buttonA.className = "w-full text-left p-4 rounded-2xl border text-xs sm:text-sm font-extrabold flex items-center justify-between transition-all duration-300 focus:outline-none ";
+        buttonA.innerHTML = `
+          <span class="leading-relaxed flex-grow pr-2">${q.phrase}</span>
+          <span class="bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-xs font-bold px-2.5 py-1 rounded-lg">A</span>
+        `;
+
+        if (isAnswered) {
+          buttonA.disabled = true;
+          buttonA.className += " bg-emerald-50 dark:bg-emerald-950/20 border-emerald-500 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300";
+        } else {
+          if (colASelected) {
+            buttonA.className += " bg-blue-50 dark:bg-blue-950/30 border-blue-500 dark:border-blue-400 ring-4 ring-blue-500/20 text-blue-900 dark:text-blue-100";
+          } else {
+            buttonA.className += " bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 animate-pulse";
+          }
+
+          buttonA.addEventListener("click", () => {
+            colASelected = !colASelected;
+            renderApp();
+          });
+        }
+        colAWrapper.appendChild(buttonA);
+
+        // Divider column
+        const divider = document.createElement("div");
+        divider.className = "hidden md:flex col-span-1 items-center justify-center text-slate-300 dark:text-slate-600";
+        divider.innerHTML = '<i class="fa-solid fa-right-left text-lg"></i>';
+
+        // Column B layout
+        const colBWrapper = document.createElement("div");
+        colBWrapper.className = "col-span-1 md:col-span-4 flex flex-col justify-start space-y-2";
+        colBWrapper.innerHTML = `<span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Column B (Meanings)</span>`;
+
+        q.options.forEach((opt) => {
+          const buttonB = document.createElement("button");
+          buttonB.className = "w-full text-left p-4 rounded-2xl border text-xs sm:text-sm font-extrabold flex items-center justify-between transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 ";
+          
+          const textSpan = document.createElement("span");
+          textSpan.className = "leading-relaxed flex-grow pr-2";
+          textSpan.innerText = opt;
+          buttonB.appendChild(textSpan);
+          
+          const iconContainer = document.createElement("div");
+          iconContainer.className = "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mr-2";
+          buttonB.appendChild(iconContainer);
+          
+          buttonB.className += " bg-slate-50 hover:bg-slate-100/80 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100";
+          
+          if (isAnswered) {
+            buttonB.disabled = true;
+            const isCorrectOption = opt === q.answer;
+            const isUserSelected = opt === savedUserAnswer;
+            
+            if (isCorrectOption) {
+              buttonB.className = buttonB.className.replace("bg-slate-50", "").replace("dark:bg-slate-800", "");
+              buttonB.className += " border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 font-black";
+              iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500 dark:text-emerald-400 text-base"></i>';
+            } else if (isUserSelected) {
+              buttonB.className = buttonB.className.replace("bg-slate-50", "").replace("dark:bg-slate-800", "");
+              buttonB.className += " border-rose-500 dark:border-rose-400 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300";
+              iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500 dark:text-rose-400 text-base"></i>';
+            } else {
+              buttonB.className += " opacity-40";
+            }
+          } else {
+            buttonB.addEventListener("click", () => {
+              if (!colASelected) {
+                showToast("الرجاء تحديد العبارة من القائمة (A) أولاً بالضغط عليها!", "warning");
+                // Pulse feedback to Column A button
+                const btnA = document.getElementById("matchColA");
+                if (btnA) {
+                  btnA.classList.add("ring-4", "ring-rose-500/50", "border-rose-500");
+                  setTimeout(() => {
+                    btnA.classList.remove("ring-4", "ring-rose-500/50", "border-rose-500");
+                  }, 1000);
+                }
+                return;
+              }
+              handleAnswerSelection(opt, q, buttonB);
+            });
+          }
+          colBWrapper.appendChild(buttonB);
+        });
+
+        grid.appendChild(colAWrapper);
+        grid.appendChild(divider);
+        grid.appendChild(colBWrapper);
+        optionsContainer.appendChild(grid);
+
+      } else {
+        // STANDARD MCQ RENDERING
+        document.getElementById("questionText").innerHTML = q.question;
+        
+        q.options.forEach((opt) => {
+          const button = document.createElement("button");
+          button.className = "w-full text-right p-4 rounded-2xl border text-xs sm:text-sm font-extrabold flex items-center justify-between transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 ";
+          
+          const textSpan = document.createElement("span");
+          textSpan.className = "leading-relaxed flex-grow pr-2";
+          textSpan.innerText = opt;
+          button.appendChild(textSpan);
+          
+          const iconContainer = document.createElement("div");
+          iconContainer.className = "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mr-2";
+          button.appendChild(iconContainer);
+          
+          // Base styling for light/dark
+          button.className += " bg-slate-50 hover:bg-slate-100/80 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100";
+          
+          if (isAnswered) {
+            button.disabled = true; // Disable clicks since answered
+            
+            const isCorrectOption = opt === q.answer;
+            const isUserSelected = opt === savedUserAnswer;
+            
+            if (isCorrectOption) {
+              // Outline/Fill correct answer in emerald
+              button.className = button.className.replace("bg-slate-50", "").replace("dark:bg-slate-800", "");
+              button.className += " border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 font-black";
+              iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500 dark:text-emerald-400 text-base"></i>';
+            } else if (isUserSelected) {
+              // Selected wrong choice highlighted in rose
+              button.className = button.className.replace("bg-slate-50", "").replace("dark:bg-slate-800", "");
+              button.className += " border-rose-500 dark:border-rose-400 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300";
+              iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500 dark:text-rose-400 text-base"></i>';
+            } else {
+              // Other wrong unselected choices slightly faded
+              button.className += " opacity-40";
+            }
+          } else {
+            // Regular un-clicked state
+            button.addEventListener("click", () => {
+              handleAnswerSelection(opt, q, button);
+            });
+          }
+          
+          optionsContainer.appendChild(button);
+        });
+      }
+      
+      // Toggle Dynamic Explanation and Hint UI Panel
+      const explanationPanel = document.getElementById("explanationPanel");
+      const nextBtn = document.getElementById("nextBtn");
+      
+      if (isAnswered) {
+        explanationPanel.classList.remove("hidden");
+        nextBtn.removeAttribute("disabled");
+        nextBtn.className = nextBtn.className.replace("text-slate-400 dark:text-slate-500", "bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/20");
+        
+        const isUserCorrect = savedUserAnswer === q.answer;
+        const explanationIconContainer = document.getElementById("explanationIconContainer");
+        
+        document.getElementById("explanationText").innerText = q.hint;
+        
+        if (isUserCorrect) {
+          explanationPanel.className = "transition-all duration-300 rounded-2xl p-5 border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-950/10";
+          explanationIconContainer.className = "w-8 h-8 rounded-lg flex items-center justify-center mt-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-500";
+          explanationIconContainer.innerHTML = '<i class="fa-solid fa-check"></i>';
+          document.getElementById("explanationTitle").innerText = "أحسنت! إجابة صحيحة وتحليل موفق";
+          document.getElementById("explanationTitle").className = "text-sm font-extrabold mb-1 text-emerald-800 dark:text-emerald-400";
+        } else {
+          explanationPanel.className = "transition-all duration-300 rounded-2xl p-5 border border-rose-200 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-950/10";
+          explanationIconContainer.className = "w-8 h-8 rounded-lg flex items-center justify-center mt-0.5 bg-rose-100 dark:bg-rose-950 text-rose-50";
+          explanationIconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+          document.getElementById("explanationTitle").innerText = "إجابة غير دقيقة! راجع المفهوم العلمي";
+          document.getElementById("explanationTitle").className = "text-sm font-extrabold mb-1 text-rose-800 dark:text-rose-400";
+        }
+      } else {
+        explanationPanel.classList.add("hidden");
+        nextBtn.setAttribute("disabled", "true");
+        nextBtn.className = "px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-extrabold text-sm transition-all duration-300 flex items-center space-x-2 space-x-reverse focus:outline-none disabled:cursor-not-allowed";
+      }
+    }
+
+    // Controller Answer selection state trigger
+    function handleAnswerSelection(selectedOption, question, element) {
+      if (appState.answeredMap[question.id] !== undefined) return;
+      
+      const isCorrect = selectedOption === question.answer;
+      appState.answeredMap[question.id] = selectedOption;
+      
+      if (isCorrect) {
+        appState.correctCount++;
+        soundManager.play(true);
+        showToast("إجابة صحيحة! أحسنت التقييم.", "success");
+      } else {
+        appState.wrongCounter++;
+        soundManager.play(false);
+        showToast(`إجابة غير صحيحة. الإجابة الصحيحة هي: ${question.answer}`, "danger");
+      }
+      
+      appState.save();
+      renderApp();
+    }
+
+    // Wire up all event listeners safely
+    function initializeEvents() {
+      // 1. Dark Mode Theme swapping
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      
+      // Auto detect user theme preferences safely on load
+      if (localStorage.getItem("ecology_dark_mode") === "true" || 
+          (!localStorage.getItem("ecology_dark_mode") && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      
+      themeToggleBtn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("ecology_dark_mode", isDark);
+        showToast(isDark ? "تم تفعيل الوضع الداكن" : "تم تفعيل الوضع الفاتح", "info");
+      });
+      
+      // 2. Bookmark toggle button click
+      document.getElementById("bookmarkBtn").addEventListener("click", () => {
+        const q = appState.activePool[appState.currentIndex];
+        if (!q) return;
+        
+        const idx = appState.bookmarks.indexOf(q.id);
+        if (idx > -1) {
+          appState.bookmarks.splice(idx, 1);
+          showToast("تمت إزالة السؤال من المفضلة المرجعية", "warning");
+        } else {
+          appState.bookmarks.push(q.id);
+          showToast("تمت إضافة السؤال للمفضلة المرجعية ⭐", "success");
+        }
+        
+        appState.save();
+        renderApp();
+      });
+      
+      // 3. Sequential vs Random button toggles
+      const seqModeBtn = document.getElementById("seqModeBtn");
+      const randModeBtn = document.getElementById("randModeBtn");
+      
+      function updateModeButtons() {
+        if (appState.isRandomMode) {
+          randModeBtn.className = "py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm";
+          seqModeBtn.className = "py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white";
+        } else {
+          seqModeBtn.className = "py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm";
+          randModeBtn.className = "py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white";
+        }
+      }
+      
+      seqModeBtn.addEventListener("click", () => {
+        if (!appState.isRandomMode) return;
+        appState.isRandomMode = false;
+        updateModeButtons();
+        prepareActivePool();
+        renderApp();
+        showToast("تم تفعيل نمط الترتيب المتسلسل للأسئلة", "info");
+      });
+      
+      randModeBtn.addEventListener("click", () => {
+        if (appState.isRandomMode) return;
+        appState.isRandomMode = true;
+        updateModeButtons();
+        prepareActivePool();
+        renderApp();
+        showToast("تم تفعيل نمط الخلط العشوائي للأسئلة", "info");
+      });
+      
+      // Initial state sync for modes
+      updateModeButtons();
+      
+      // 4. Dropdown category filters change event
+      const categoryFilter = document.getElementById("categoryFilter");
+      categoryFilter.value = appState.activeCategory;
+      
+      categoryFilter.addEventListener("change", (e) => {
+        const val = e.target.value;
+        
+        if (val === "bookmarked") {
+          const storedBookmarks = appState.bookmarks;
+          if (storedBookmarks.length === 0) {
+            showToast("قائمة المفضلة المرجعية فارغة حالياً!", "warning");
+            categoryFilter.value = appState.activeCategory; // reset back
+            return;
+          }
+        }
+        
+        appState.activeCategory = val;
+        appState.currentIndex = 0;
+        appState.save();
+        
+        prepareActivePool();
+        renderApp();
+        showToast(`تم تبديل الفئة المعروضة بنجاح`, "success");
+      });
+      
+      // 5. Global Reset Progression modal logic
+      const resetAppBtn = document.getElementById("resetAppBtn");
+      const resetModal = document.getElementById("resetModal");
+      const cancelResetBtn = document.getElementById("cancelResetBtn");
+      const confirmResetBtn = document.getElementById("confirmResetBtn");
+      
+      resetAppBtn.addEventListener("click", () => {
+        resetModal.classList.remove("hidden");
+        setTimeout(() => {
+          resetModal.classList.remove("opacity-0");
+          resetModal.querySelector(".transform").classList.remove("scale-95");
+        }, 50);
+      });
+      
+      function hideResetModal() {
+        resetModal.classList.add("opacity-0");
+        resetModal.querySelector(".transform").classList.add("scale-95");
+        setTimeout(() => {
+          resetModal.classList.add("hidden");
+        }, 300);
+      }
+      
+      cancelResetBtn.addEventListener("click", hideResetModal);
+      
+      confirmResetBtn.addEventListener("click", () => {
+        appState.reset();
+        categoryFilter.value = "all";
+        updateModeButtons();
+        hideResetModal();
+        prepareActivePool();
+        renderApp();
+        showToast("تمت إعادة ضبط جميع بيانات التقدم والعلامات المرجعية بنجاح بنسبة 100%", "success");
+      });
+      
+      // Close modal on overlay tap safely
+      resetModal.addEventListener("click", (e) => {
+        if (e.target === resetModal) hideResetModal();
+      });
+      
+      // 6. Hint Trigger click
+      document.getElementById("hintBtn").addEventListener("click", () => {
+        const q = appState.activePool[appState.currentIndex];
+        if (!q) return;
+        showToast(`تلميح: ${q.hint}`, "warning");
+      });
+      
+      // 7. Next Question transition navigation
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        const total = appState.activePool.length;
+        if (appState.currentIndex < total - 1) {
+          appState.currentIndex++;
+          appState.save();
+          renderApp();
+        } else {
+          // If was last question, rendering loop handles showing complete section
+          appState.currentIndex++;
+          appState.save();
+          renderApp();
+        }
+      });
+      
+      // 8. Finished state Section actions
+      document.getElementById("restartSectionBtn").addEventListener("click", () => {
+        // Only clear answered state for active pool to let them reuse the chapter cleanly
+        appState.activePool.forEach(q => {
+          delete appState.answeredMap[q.id];
+        });
+        
+        appState.currentIndex = 0;
+        appState.save();
+        renderApp();
+        showToast("تمت إعادة تهيئة القسم الحالي للتدرب مجدداً", "success");
+      });
+      
+      document.getElementById("backToAllBtn").addEventListener("click", () => {
+        appState.activeCategory = "all";
+        categoryFilter.value = "all";
+        appState.currentIndex = 0;
+        appState.save();
+        prepareActivePool();
+        renderApp();
+        showToast("تم العودة لعرض جميع فصول المنهج المتاحة", "info");
+      });
+    }
+
+    // App controller initializer
+    window.addEventListener("DOMContentLoaded", () => {
+      appState.load();
+      prepareActivePool();
+      initializeEvents();
+      renderApp();
+    });
+  </script>
+</body>
+</html>
