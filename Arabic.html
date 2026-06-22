@@ -1,0 +1,2426 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة مراجعة الكفايات اللغوية التفاعلية</title>
+  
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col">
+
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 space-x-reverse">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 animate-pulse">
+          <i class="fa-solid fa-book-open text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">الكفايات اللغوية</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">منصة مراجعة تفاعلية شاملة للمنهج المعتمد</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-2 space-x-reverse">
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-300 focus:outline-none" title="تغيير المظهر">
+          <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+          <i class="fa-solid fa-sun hidden dark:block text-lg"></i>
+        </button>
+        
+        <!-- Reset Progress Button -->
+        <button id="resetAppBtn" class="px-3.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold text-xs sm:text-sm transition-all duration-300 flex items-center space-x-1.5 space-x-reverse focus:outline-none border border-rose-200 dark:border-rose-900/50" title="إعادة تصفير كل الإجابات والتقدم">
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+          <span>إعادة ضبط البيانات</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Left Sidebar (Stats & Navigation Panels) -->
+      <div class="lg:col-span-1 flex flex-col space-y-6">
+        
+        <!-- Progress Tracking Card -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+          <h2 class="text-base font-bold mb-4 flex items-center space-x-2 space-x-reverse text-slate-900 dark:text-white">
+            <i class="fa-solid fa-chart-line text-emerald-500"></i>
+            <span>مؤشرات الأداء الحالي</span>
+          </h2>
+          
+          <!-- Circular Progress representation in simplified dashboard-style -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex flex-col">
+              <span class="text-3xl font-extrabold text-emerald-500" id="progressPercent">0%</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">نسبة الإنجاز الإجمالية</span>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <i class="fa-solid fa-trophy text-xl"></i>
+            </div>
+          </div>
+          
+          <!-- Linear Progress Bar -->
+          <div class="space-y-1.5 mb-5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span id="progressBarLabel">تمت الإجابة على 0 من 0</span>
+              <span class="text-slate-400" id="progressBarPercent">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+              <div id="progressFill" class="bg-emerald-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <!-- Quick Counter Boxes -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 rounded-xl p-3 text-center transition-colors">
+              <span class="block text-2xl font-extrabold text-emerald-600 dark:text-emerald-400" id="correctCounter">0</span>
+              <span class="text-xs font-bold text-emerald-700/80 dark:text-emerald-500">إجابة صحيحة</span>
+            </div>
+            <div class="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 rounded-xl p-3 text-center transition-colors">
+              <span class="block text-2xl font-extrabold text-rose-600 dark:text-rose-400" id="wrongCounter">0</span>
+              <span class="text-xs font-bold text-rose-700/80 dark:text-rose-500">إجابة خاطئة</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Filters & Controls Card -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+          <h2 class="text-base font-bold mb-4 flex items-center space-x-2 space-x-reverse text-slate-900 dark:text-white">
+            <i class="fa-solid fa-sliders text-emerald-500"></i>
+            <span>تخصيص المراجعة</span>
+          </h2>
+          
+          <!-- Order Mode Selection -->
+          <div class="mb-4">
+            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">ترتيب الأسئلة</label>
+            <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-700 p-1 rounded-xl">
+              <button id="seqModeBtn" class="py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm">
+                متسلسل
+              </button>
+              <button id="randModeBtn" class="py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white">
+                عشوائي بالكامل
+              </button>
+            </div>
+          </div>
+          
+          <!-- Category Filter Selection -->
+          <div>
+            <label for="categoryFilter" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">القسم / نوع المهارة</label>
+            <div class="relative">
+              <select id="categoryFilter" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none cursor-pointer transition-all">
+                <option value="all">جميع الأسئلة والأقسام</option>
+                <option value="mcq">الاختيار من متعدد</option>
+                <option value="tf">الصح والخطأ</option>
+                <option value="match">المزاوجة (التوصيل)</option>
+                <option value="bookmarked">⭐ الأسئلة المفضلة المحددة</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 text-slate-400">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Playground (The Quiz Card) -->
+      <div class="lg:col-span-2 flex flex-col space-y-6">
+        
+        <!-- Completed Active Pool State View -->
+        <div id="completedView" class="hidden bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-lg text-center transition-colors duration-300">
+          <div class="w-20 h-20 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-500 mb-6">
+            <i class="fa-solid fa-award text-4xl"></i>
+          </div>
+          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">تهانينا! لقد أكملت القسم الحالي</h2>
+          <p class="text-slate-500 dark:text-slate-400 text-sm max-w-md mx-auto mb-6" id="completedMsg">
+            لقد تمكنت من الإجابة على جميع الأسئلة المتوفرة في هذا التصنيف بنجاح. يمكنك إعادة المحاولة أو الانتقال إلى مهارات لغوية أخرى.
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
+            <button id="restartSectionBtn" class="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse focus:outline-none shadow-md shadow-emerald-500/20">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>إعادة تشغيل القسم</span>
+            </button>
+            <button id="backToAllBtn" class="w-full sm:w-auto px-6 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-white font-bold rounded-xl transition-all duration-300 focus:outline-none">
+              <span>عرض جميع الأسئلة</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Main Quiz Card -->
+        <div id="quizCard" class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300 min-h-[480px] flex flex-col justify-between">
+          
+          <!-- Card Header Info -->
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center space-x-2 space-x-reverse">
+                <span class="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full" id="questionCategory">
+                  جاري التحميل...
+                </span>
+                <span class="text-slate-400 dark:text-slate-500 text-xs font-semibold" id="questionNumber">
+                  السؤال 0 / 0
+                </span>
+              </div>
+              
+              <!-- Bookmark Button -->
+              <button id="bookmarkBtn" class="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-400 dark:text-slate-400 hover:text-amber-500 transition-all focus:outline-none flex items-center justify-center border border-slate-100 dark:border-slate-600/50" title="أضف للمفضلة المرجعية">
+                <i class="fa-regular fa-bookmark text-base"></i>
+              </button>
+            </div>
+            
+            <!-- Question Box -->
+            <div class="mb-6">
+              <div class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-relaxed text-right" id="questionText">
+                جاري تحميل محتوى السؤال المختار...
+              </div>
+            </div>
+            
+            <!-- Options Layout -->
+            <div class="space-y-3" id="optionsContainer">
+              <!-- Options loaded dynamically -->
+            </div>
+          </div>
+          
+          <!-- Explanation / Hint Panel & Footer Navigation -->
+          <div class="mt-8 space-y-6">
+            
+            <!-- Explanation & Rationale Panel (Hidden by default) -->
+            <div id="explanationPanel" class="hidden transition-all duration-300 rounded-2xl p-5 border">
+              <div class="flex items-start space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center mt-0.5" id="explanationIconContainer">
+                  <!-- Dynamic icon based on correctness -->
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-sm font-extrabold mb-1" id="explanationTitle">التحليل اللغوي للسؤال</h3>
+                  <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium" id="explanationText">
+                    هذا الحقل مخصص للشرح والتفسير الإرشادي للخيارات.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Footer Navigation -->
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700/60">
+              <!-- Hint Button -->
+              <button id="hintBtn" class="px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 text-amber-600 dark:text-amber-400 font-extrabold text-xs transition-all duration-300 flex items-center space-x-1.5 space-x-reverse focus:outline-none border border-amber-200/50 dark:border-amber-900/30">
+                <i class="fa-regular fa-lightbulb"></i>
+                <span>عرض تلميح لغوي</span>
+              </button>
+              
+              <!-- Next Question Button -->
+              <button id="nextBtn" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-extrabold text-sm transition-all duration-300 flex items-center space-x-2 space-x-reverse focus:outline-none disabled:cursor-not-allowed" disabled>
+                <span>السؤال التالي</span>
+                <i class="fa-solid fa-arrow-left"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-12 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold">مراجعة الكفايات اللغوية التفاعلية الشاملة.</p>
+      <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold mt-1">&copy; 2026 جميع الحقوق محفوظة لوزارة التعليم والمنهج المعتمد.</p>
+    </div>
+  </footer>
+
+  <!-- Custom Reset Modal Overlay -->
+  <div id="resetModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 dark:border-slate-700 transform scale-95 transition-transform duration-300">
+      <div class="text-center">
+        <div class="w-14 h-14 bg-rose-100 dark:bg-rose-950/30 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+        </div>
+        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-2">هل أنت متأكد من إعادة الضبط؟</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
+          سيؤدي هذا الإجراء إلى حذف جميع سجلات التقدم الحالي، الإجابات المحفوظة، والأسئلة المفضلة بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.
+        </p>
+        <div class="flex items-center space-x-3 space-x-reverse">
+          <button id="confirmResetBtn" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl transition-all shadow-md shadow-rose-500/10">
+            نعم، احذف البيانات
+          </button>
+          <button id="cancelResetBtn" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-all">
+            تراجع
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System Container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 left-6 sm:left-auto z-50 flex flex-col space-y-3 pointer-events-none"></div>
+
+  <!-- Sound Effects / Buzzers (Simulated with Web Audio API for extreme standalone zero-dependencies correctness) -->
+  <script>
+    const soundManager = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      },
+      play(correct) {
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          
+          if (correct) {
+            osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.1); // E5
+            gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.4);
+          } else {
+            osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.3);
+          }
+        } catch (e) {
+          // Silent catch if audio is blocked or unsupported
+        }
+      }
+    };
+  </script>
+
+  <!-- Complete Database Array Initialization -->
+  <script>
+    const ALL_QUESTIONS = [
+      // ==== الاختيار من متعدد ====
+      {
+        id: "mcq_1",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي المكونات الأساسية للجملة الاسمية (نواة الجملة)؟",
+        options: ["(أ) الفعل والفاعل", "(ب) المبتدأ والخبر", "(ج) الفعل ونائب الفاعل", "(د) المبتدأ والفاعل"],
+        answer: "(ب) المبتدأ والخبر",
+        hint: "تتكون الجملة الاسمية أساساً من ركنين مرفوعين هما المبتدأ والخبر."
+      },
+      {
+        id: "mcq_2",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من الكلمات التالية يُعرب دائماً في حالة الجر؟",
+        options: ["(أ) الحال", "(ب) المضاف إليه", "(ج) التمييز", "(د) المستثنى"],
+        answer: "(ب) المضاف إليه",
+        hint: "المجرورات في الأسماء تشمل المجرور بحرف الجر والمجرور بالإضافة (المضاف إليه)."
+      },
+      {
+        id: "mcq_3",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي علامة رفع (الأسماء الخمسة)؟",
+        options: ["(أ) الضمة", "(ب) الألف", "(ج) الواو", "(د) ثبوت النون"],
+        answer: "(ج) الواو",
+        hint: "ترفع الأسماء الخمسة بالواو وتنصب بالألف وتجر بالياء."
+      },
+      {
+        id: "mcq_4",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "الجملة التي احتوت على فعل متعدي هي:",
+        options: ["(أ) دخل محمد الفصل", "(ب) الحديقة جميلة", "(ج) ظن محمد الاختبار سهلاً", "(د) نمتُ مبكراً"],
+        answer: "(ج) ظن محمد الاختبار سهلاً",
+        hint: "الفعل المتعدي هو الذي لا يكتفي بفاعله بل يتجاوزه لينصب مفعولاً به أو أكثر (مثل ظن التي تنصب مفعولين)."
+      },
+      {
+        id: "mcq_5",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "علامة الجر في المثنى هي:",
+        options: ["(أ) الألف", "(ب) الكسرة", "(ج) الياء", "(د) الفتحة"],
+        answer: "(ج) الياء",
+        hint: "المثنى يرفع بالألف وينصب ويجر بالياء."
+      },
+      {
+        id: "mcq_6",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما العلامة الإعرابية لاسم (أخيك) في جملة: سلمت على أخيك؟",
+        options: ["(أ) الكسرة", "(ب) الياء", "(ج) الألف", "(د) الفتحة"],
+        answer: "(ب) الياء",
+        hint: "أخيك اسم من الأسماء الخمسة سبق بحرف الجر (على)، وعلامة جره الياء."
+      },
+      {
+        id: "mcq_7",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "عند إضافة كلمة (معلمون) إلى كلمة (المدرسة)، فإن الكتابة الصحيحة هي:",
+        options: ["(أ) معلمون المدرسة", "(ب) معلمين المدرسة", "(ج) معلمو المدرسة", "(د) معلمي المدرسة"],
+        answer: "(ج) معلمو المدرسة",
+        hint: "تحذف النون من جمع المذكر السالم والمثنى عند الإضافة."
+      },
+      {
+        id: "mcq_8",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "علامة جر الاسم الممنوع من الصرف إذا لم يكن مضافاً ولا معرفاً بـ (الـ) هي:",
+        options: ["(أ) الكسرة", "(ب) الياء", "(ج) الفتحة", "(د) السكون"],
+        answer: "(ج) الفتحة",
+        hint: "يجر الممنوع من الصرف بالفتحة نيابة عن الكسرة إذا تجرد من ال والإضافة."
+      },
+      {
+        id: "mcq_9",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي الحالة الإعرابية لجميع المفاعيل في اللغة العربية؟",
+        options: ["(أ) مرفوعة دائماً", "(ب) منصوبة دائماً", "(ج) مجرورة دائماً", "(د) مبنية دائماً"],
+        answer: "(ب) منصوبة دائماً",
+        hint: "المفاعيل الخمسة (المفعول به، المطلق، لأجله، فيه، معه) كلها من منصوبات الأسماء."
+      },
+      {
+        id: "mcq_10",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من الجمل التالية تحتوي على مفعول لأجله؟",
+        options: ["(أ) شرحت المسألة شرحاً وافياً", "(ب) نقلت الصحيفة الخبر", "(ج) اجتهدتُ طلباً للنجاح", "(د) انتظرتك ساعةً كاملة"],
+        answer: "(ج) اجتهدتُ طلباً للنجاح",
+        hint: "المفعول لأجله هو مصدر منصوب يبين سبب حدوث الفعل، ويجيب عن سؤال (لماذا؟)."
+      },
+      {
+        id: "mcq_11",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هو المتمم المنصوب الذي يجيب عن سؤال (كيف)؟",
+        options: ["(أ) المفعول به", "(ب) الحال", "(ج) التمييز", "(د) المفعول فيه"],
+        answer: "(ب) الحال",
+        hint: "الحال وصف فضلة منصوب يبين هيئة صاحب الحال عند وقوع الفعل."
+      },
+      {
+        id: "mcq_12",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "في تصنيف الكلمات المهموزة الواردة في النشاط، كلمة (استغفر) تحتوي على:",
+        options: ["(أ) همزة قطع", "(ب) همزة وصل", "(ج) همزة متوسطة على الألف", "(د) همزة متطرفة على الياء"],
+        answer: "(ب) همزة وصل",
+        hint: "ماضي الفعل السداسي وأمره ومصدره همزتها همزة وصل دائماً."
+      },
+      {
+        id: "mcq_13",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "الكلمة التي رُسمت فيها الهمزة المتوسطة على الواو من بين الكلمات التالية هي:",
+        options: ["(أ) يسأل", "(ب) بئر", "(ج) شؤون", "(د) أطفأ"],
+        answer: "(ج) شؤون",
+        hint: "شؤون رسمت على الواو لأن الهمزة مضمومة وما قبلها مضموم."
+      },
+      {
+        id: "mcq_14",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "جميع الحروف التالية تبدأ بهمزة قطع ما عدا:",
+        options: ["(أ) إلى", "(ب) إن", "(ج) أو", "(د) ال التعريف"],
+        answer: "(د) ال التعريف",
+        hint: "جميع الحروف في العربية همزتها قطع ما عدا ال التعريف فإن همزتها وصل."
+      },
+      {
+        id: "mcq_15",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي أقوى الحركات في اللغة العربية عند كتابة الهمزة؟",
+        options: ["(أ) الفتحة", "(ب) الضمة", "(ج) الكسرة", "(د) السكون"],
+        answer: "(ج) الكسرة",
+        hint: "ترتيب قوة الحركات: الكسرة (الأقوى)، تليها الضمة، ثم الفتحة، وأخيراً السكون."
+      },
+      {
+        id: "mcq_16",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "عند كتابة الهمزة المتوسطة، ننظر إلى:",
+        options: ["(أ) حركة الهمزة فقط", "(ب) حركة الحرف الذي قبلها فقط", "(ج) حركة الهمزة وحركة الحرف الذي قبلها", "(د) حركة الحرف الأخير في الكلمة"],
+        answer: "(ج) حركة الهمزة وحركة الحرف الذي قبلها",
+        hint: "تكتب الهمزة المتوسطة بمقارنة حركتها مع حركة ما قبلها وكتابتها على ما يناسب أقوى الحركتين."
+      },
+      {
+        id: "mcq_17",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "كتبت الهمزة في كلمة (مُؤْمِن) على الواو لأن:",
+        options: ["(أ) الهمزة مفتوحة وما قبلها مضموم", "(ب) الهمزة ساكنة وما قبلها مضموم", "(ج) الهمزة مضمومة وما قبلها مفتوح", "(د) الهمزة مكسورة وما قبلها ساكن"],
+        answer: "(ب) الهمزة ساكنة وما قبلها مضموم",
+        hint: "مُؤْمِن: الهمزة ساكنة والماقبل مضموم والضم أقوى من السكون ويناسبه الواو."
+      },
+      {
+        id: "mcq_18",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "تكتب الهمزة المتطرفة على الياء إذا كان ما قبلها:",
+        options: ["(أ) مكسوراً", "(ب) مضموماً", "(ج) مفتوحاً", "(د) ساكناً"],
+        answer: "(أ) مكسوراً",
+        hint: "الهمزة المتطرفة تكتب بحسب حركة الحرف السابق لها فقط، ويناسب الكسر الياء (النبأ، التكافؤ، الشاطئ، الدفء)."
+      },
+      {
+        id: "mcq_19",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما الرسم الصحيح لكلمة (مَلْجَأ) عند تثنيتها في حالة الرفع (إضافة ان)؟",
+        options: ["(أ) ملجأن", "(ب) ملجآن", "(ج) ملجؤان", "(د) ملجئان"],
+        answer: "(ب) ملجآن",
+        hint: "إذا تلت الهمزة المتطرفة المرسومة على الألف ألف التثنية دمجتا وصارتا مدة."
+      },
+      {
+        id: "mcq_20",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "في قول الشاعر: \"والبحرُ ساءلتهُ فتضاحكت أمواجهُ\"، ما نوع الأسلوب البلاغي في عبارة \"تضاحكت أمواجه\"؟",
+        options: ["(أ) تشبيه تام", "(ب) استعارة", "(ج) تورية", "(د) سجع"],
+        answer: "(ب) استعارة",
+        hint: "تضاحكت الأمواج: شبه الأمواج بإنسان يضحك وحذف المشبه به ورمز له بشيء من لوازمه (تضاحكت)، وهي استعارة مكنية."
+      },
+      {
+        id: "mcq_21",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من الأساليب البلاغية التالية يُعرف بأنه: الدلالة على أن شيئاً أو صورة تشترك مع شيء آخر أو صورة في معنى أو صفة؟",
+        options: ["(أ) التشبيه", "(ب) الاستعارة", "(ج) الكناية", "(د) تورية"],
+        answer: "(أ) التشبيه",
+        hint: "التشبيه هو الربط بين شيئين يشتركان في صفة أو أكثر بأداة تشبيه."
+      },
+      {
+        id: "mcq_22",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي الأساليب البلاغية يعتمد على استخدام كلمتين متشابهتين في اللفظ مختلفتين في المعنى؟",
+        options: ["(أ) الطباق", "(ب) السجع", "(ج) الجناس", "(د) الكناية"],
+        answer: "(ج) الجناس",
+        hint: "الجناس هو تماثل الكلمتين في اللفظ مع اختلافهما في المعنى، وينقسم إلى تام وغير تام."
+      },
+      {
+        id: "mcq_23",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "من هو العالم الذي قام بدراسة موسيقى الشعر العربي واكتشف أوزانه (البحور الشعرية)؟",
+        options: ["(أ) سيبويه", "(ب) أبو العلاء المعري", "(ج) الخليل بن أحمد الفراهيدي", "(د) أبو الطيب المتنبي"],
+        answer: "(ج) الخليل بن أحمد الفراهيدي",
+        hint: "الخليل بن أحمد الفراهيدي هو واضع علم العروض وضابط بحور الشعر الستة عشر."
+      },
+      {
+        id: "mcq_24",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "كيف يتميز \"الشعر الحر\" عن \"الشعر العمودي\" بحسب تعريفات الدرس؟",
+        options: [
+          "(أ) يتكون من شطرين وينتهي بقافية موحدة",
+          "(ب) لا يلتزم بقافية معينة ويتكون من أسطر شعرية بدلاً من الأبيات",
+          "(ج) يخلو تماماً من أي إيقاع موسيقي أو وزن",
+          "(د) يكتب بالنثر ولا يحتوي على صور فنية"
+        ],
+        answer: "(ب) لا يلتزم بقافية معينة ويتكون من أسطر شعرية بدلاً من الأبيات",
+        hint: "الشعر الحر يعتمد على التفعيلة والأسطر الشعرية المتفاوتة الطول متحرراً من نظام الشطرين والقافية الموحدة."
+      },
+      {
+        id: "mcq_25",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما العنصر الذي يميز الشعر عن بقية الفنون الأدبية الأخرى كالقصة والمقال؟",
+        options: ["(أ) استخدام الحوار والصراع", "(ب) المحافظة على إيقاع (وزن) محدد", "(ج) سرد الأحداث الواقعية", "(د) العرض المتسلسل للأفكار"],
+        answer: "(ب) المحافظة على إيقاع (وزن) محدد",
+        hint: "الوزن العروضي والقافية هما ركنا موسيقى الشعر الفاصلان بينه وبين النثر الأدبي."
+      },
+      {
+        id: "mcq_26",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي مما يلي يُعد من عناصر (الموسيقى اللفظية) في تحليل البنية البلاغية؟",
+        options: ["(أ) الاستعارة والكناية", "(ب) التقديم والتأخير", "(ج) السجع والجناس", "(د) ترتيب الأفكار"],
+        answer: "(ج) السجع والجناس",
+        hint: "السجع والجناس يمثلان محسنات لفظية تضفي نغماً جرسياً موسيقياً على الكلام."
+      },
+      {
+        id: "mcq_27",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "في قول الشاعر: \"كأنك في جفن الردى وهو نائم\"، ما الكلمة التي دلت على الثبات والشجاعة في سياق البيت؟",
+        options: ["(أ) قام", "(ب) وقف", "(ج) نام", "(د) الردى"],
+        answer: "(ب) وقف",
+        hint: "البيت الشهير للمتنبي: 'وقفتَ كأنك في جفن الردى وهو نائمُ... وتشهد شجاعة وثبات الممدوح'."
+      },
+      {
+        id: "mcq_28",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من الأساليب البلاغية التالية يظهر في قوله تعالى: (يَوْمَ يَكُونُ النَّاسُ كَالْفَرَاشِ الْمَبْثُوثِ)؟",
+        options: ["(أ) استعارة", "(ب) كناية", "(ج) تشبيه", "(د) تورية"],
+        answer: "(ج) تشبيه",
+        hint: "وجود أداة التشبيه (الكاف) يربط بوضوح المشبه (الناس) بالمشبه به (الفراش المبثوث)."
+      },
+      {
+        id: "mcq_29",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هو العنصر الذي يُعد أساس العمل الأدبي والمسؤول عن رسم أبعاد الصورة التي يريد الكاتب نقلها؟",
+        options: ["(أ) الأرقام والإحصاءات", "(ب) الخيال", "(ج) الحقائق العلمية", "(د) المصادر والمراجع"],
+        answer: "(ب) الخيال",
+        hint: "الخيال العاطفي والصور الفنية هما جوهر الأدب الذي يميز التعبير الجمالي عن التعبير العلمي."
+      },
+      {
+        id: "mcq_30",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من المعايير التالية يمكن استخدامه لترتيب الأحداث عند كتابة المذكرات؟",
+        options: ["(أ) الترتيب الأبجدي", "(ب) الترتيب العشوائي", "(ج) الزمن أو العاطفة أو التأثير", "(د) حسب طول الفقرة"],
+        answer: "(ج) الزمن أو العاطفة أو التأثير",
+        hint: "ترتب أحداث المذكرات إما تسلسلياً زمنياً أو حسب أهمية وتأثير الحدث والوجدان النفسي."
+      },
+      {
+        id: "mcq_31",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "تعتبر المذكرات الأدبية مصدراً مهماً لـ:",
+        options: ["(أ) تعلم القواعد النحوية فقط", "(ب) التسلية والترفيه فقط", "(ج) التاريخ للمجتمع أو الوطن", "(د) حفظ الأشعار القديمة"],
+        answer: "(ج) التاريخ للمجتمع أو الوطن",
+        hint: "المذكرات الشخصية تقدم رصداً واقعياً لحقبة تاريخية وثقافية واجتماعية محددة للوطن."
+      },
+      {
+        id: "mcq_32",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي الكلمات التالية تُعد مثالاً على (اسم الإشارة) كما ورد في أقسام المعرفة؟",
+        options: ["(أ) الذي", "(ب) هذا", "(ج) نحن", "(د) مكة"],
+        answer: "(ب) هذا",
+        hint: "هذا، هذه، هذان، هؤلاء هي أسماء إشارة للدلالة على معين مشار إليه."
+      },
+      {
+        id: "mcq_33",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "الجملة التي تبدأ باسم تتكون ركناها الأساسيان من:",
+        options: ["(أ) فعل وفاعل", "(ب) مبتدأ وخبر", "(ج) فعل ومفعول به", "(د) جار ومجرور"],
+        answer: "(ب) مبتدأ وخبر",
+        hint: "تبدأ الجملة الاسمية باسم صريح، والخبر هو الذي يتمم الفائدة الأساسية مع المبتدأ."
+      },
+      {
+        id: "mcq_34",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي علامة الرفع لـ (جمع المذكر السالم) وفقاً لجدول علامات الإعراب؟",
+        options: ["(أ) الضمة", "(ب) الألف", "(ج) الواو", "(د) ثبوت النون"],
+        answer: "(ج) الواو",
+        hint: "يرفع جمع المذكر السالم بالواو وينصب ويجر بالياء."
+      },
+      {
+        id: "mcq_35",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "الفعل الذي يدل على حدث وقع في الزمن الماضي وانتهى هو:",
+        options: ["(أ) يكتبُ", "(ب) اكتب", "(ج) كَتَبَ", "(د) سيكتبُ"],
+        answer: "(ج) كَتَبَ",
+        hint: "كَتَبَ فعل ماض مبني على الفتح يدل على حدث انتهى حدوثه قبل زمن التكلم."
+      },
+      {
+        id: "mcq_36",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي علامة جزم (الأفعال الخمسة)؟",
+        options: ["(أ) السكون", "(ب) حذف حرف العلة", "(ج) حذف النون", "(د) الفتحة"],
+        answer: "(ج) حذف النون",
+        hint: "الأفعال الخمسة ترفع بثبوت النون وتنصب وتجزم بحذفها."
+      },
+      {
+        id: "mcq_37",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من الكلمات التالية يُعد من الحروف الناسخة؟",
+        options: ["(أ) أصبح", "(ب) صار", "(ج) ليت", "(د) ما زال"],
+        answer: "(ج) ليت",
+        hint: "ليت حرف ناسخ من أخوات إن يفيد التمني، بينما أصبح وصار وما زال هي أفعال ناسخة ناقصة."
+      },
+      {
+        id: "mcq_38",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من الأدوات التالية تُعد من أدوات نصب الفعل المضارع؟",
+        options: ["(أ) لم", "(ب) لا الناهية", "(ج) لن", "(د) إن"],
+        answer: "(ج) لن",
+        hint: "أدوات نصب المضارع هي: أن، لن، كي، إذن."
+      },
+      {
+        id: "mcq_39",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي علامة جزم الفعل المضارع الصحيح الآخر في جملة الشرط؟",
+        options: ["(أ) الفتحة", "(ب) الضمة", "(ج) السكون", "(د) الكسرة"],
+        answer: "(ج) السكون",
+        hint: "يجزم الفعل المضارع بالسكون إذا كان صحيح الآخر ولم يتصل به ضمير تثنية أو جمع أو مؤنثة مخاطبة."
+      },
+      {
+        id: "mcq_40",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "الجملة الصحيحة لأسلوب الشرط من بين الجمل التالية هي:",
+        options: ["(أ) إن تذاكرْ تنجحُ", "(ب) إن تذاكرُ تنجحْ", "(ج) إن تذاكرْ تنجحْ", "(د) إن تذاكرُ تنجحُ"],
+        answer: "(ج) إن تذاكرْ تنجحْ",
+        hint: "أسلوب الشرط يتطلب جزم فعل الشرط وجواب الشرط (تذاكرْ وتنجحْ مجزومان بالسكون)."
+      },
+      {
+        id: "mcq_41",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي الفائدة التي يحققها تحديد الأهداف في بداية الفصل للقارئ؟",
+        options: [
+          "(أ) إعطاء القارئ صورة عن محتوى الفصل والتركيز",
+          "(ب) تشتيت انتباه القارئ عن المحتوى",
+          "(ج) زيادة صعوبة فهم النص",
+          "(د) إلغاء الحاجة لقراءة النص"
+        ],
+        answer: "(أ) إعطاء القارئ صورة عن محتوى الفصل والتركيز",
+        hint: "الأهداف المحددة توفر بوصلة ذهنية للقارئ للتركيز على الأفكار الهامة وتوجيه الاستيعاب."
+      },
+      {
+        id: "mcq_42",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أين يوضع العنوان الرئيسي في الصفحة عادة؟",
+        options: ["(أ) في الركن الأيمن السفلي", "(ب) في وسط السطر الأول من أعلى الصفحة", "(ج) في هامش الصفحة الجانبي", "(د) في نهاية النص كخاتمة"],
+        answer: "(ب) في وسط السطر الأول من أعلى الصفحة",
+        hint: "تقتضي أعراف الكتابة والتنظيم وضع العنوان في منتصف السطر الأول علوياً بخط بارز."
+      },
+      {
+        id: "mcq_43",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أول عملية من عمليات القراءة المركزة كما وردت في تسلسل الدرس هي:",
+        options: [
+          "(أ) القراءة التمهيدية السريعة",
+          "(ب) أسئلة ما قبل القراءة",
+          "(ج) القراءة المتعمقة",
+          "(د) أسئلة ما بعد القراءة"
+        ],
+        answer: "(أ) القراءة التمهيدية السريعة",
+        hint: "الخطوة الأولى في القراءة المركزة هي الاستطلاع أو القراءة التمهيدية لتشكيل فكرة عامة وشاملة."
+      },
+      {
+        id: "mcq_44",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "السؤال الذي يساعد القارئ على معرفة إذا كان يقرأ للمتعة أو للاستعداد للاختبار هو:",
+        options: [
+          "(أ) أين سأجد ما أبحث عنه؟",
+          "(ب) ماذا أعرف عن الموضوع؟",
+          "(ج) كيف سأتأكد من فهم الموضوع؟",
+          "(د) ما الهدف من القراءة؟"
+        ],
+        answer: "(د) ما الهدف من القراءة؟",
+        hint: "تحديد الغاية (تسلية، دراسة، بحث عن معلومة) يرسم استراتيجية القراءة المناسبة."
+      },
+      {
+        id: "mcq_45",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "للإجابة على سؤال \"أين سأجد ما أبحث عنه؟\"، يمكن للقارئ الاستعانة بـ:",
+        options: ["(أ) الهدوء والتركيز", "(ب) التسميع مع زميل", "(ج) الفهرس أو بحث معجمي", "(د) تلخيص المعلومات السابقة"],
+        answer: "(ج) الفهرس أو بحث معجمي",
+        hint: "الفهرس ومعاجم الكتب تبين بدقة مواقع المواضيع والصفحات المراد الوصول إليها."
+      },
+      {
+        id: "mcq_46",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "عند قراءة كتاب \"شعر أو قصة\"، فإن الهدف من القراءة يكون:",
+        options: ["(أ) البحث عن قانون", "(ب) المتعة والاستمتاع", "(ج) حل مشكلة تقنية", "(د) متابعة الجديد في العلم"],
+        answer: "(ب) المتعة والاستمتاع",
+        hint: "قراءة الآداب والفنون كالرواية والشعر تهدف أساساً للتذوق الجمالي والمتعة الفكرية والوجدانية."
+      },
+      {
+        id: "mcq_47",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "إحدى الوسائل التي يحتاجها القارئ ليستوعب بصورة أفضل هي:",
+        options: ["(أ) الفهرس", "(ب) العنوان", "(ج) التسميع", "(د) الهدوء والتركيز"],
+        answer: "(د) الهدوء والتركيز",
+        hint: "تأمين بيئة هادئة خالية من المشتتات والتركيز الذهني هما عماد الاستيعاب العميق."
+      },
+      {
+        id: "mcq_48",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هي مواصفات العنوان الجيد للمقال كما ورد في الدرس؟",
+        options: [
+          "(أ) طويل ومفصل جداً",
+          "(ب) قصير ومثير ودال على المحتوى",
+          "(ج) غامض ولا يكشف عن الموضوع",
+          "(د) يحتوي على خاتمة الموضوع"
+        ],
+        answer: "(ب) قصير ومثير ودال على المحتوى",
+        hint: "العناوين الناجحة تتصف بالإيجاز، والجاذبية المثيرة، والتعبير الدقيق عن الفكرة."
+      },
+      {
+        id: "mcq_49",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من الخطوات التالية تشمل التأكد من صحة اللغة والإملاء وعلامات الترقيم؟",
+        options: ["(أ) تخطيط الموضوع", "(ب) الكتابة الأولى", "(ج) المراجعة", "(د) الكتابة النهائية"],
+        answer: "(ج) المراجعة",
+        hint: "تعديل المسودات اللغوي والإملائي والفني يتم بدقة في مرحلة المراجعة والتنقيح."
+      },
+      {
+        id: "mcq_50",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "من أشكال الرسوم التخطيطية المستخدمة في تصميم مخطط الموضوع:",
+        options: ["(أ) هيكل السمكة", "(ب) الجدول الدوري", "(ج) الرسم البياني الشريطي", "(د) المدرج التكراري"],
+        answer: "(أ) هيكل السمكة",
+        hint: "مخطط هيكل السمكة وشجرة الذاكرة هما أشهر الأشكال لتلخيص وتصنيف محاور الموضوع أدبياً."
+      },
+      {
+        id: "mcq_51",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي الأساليب التالية يُسلك لجعل المقدمة مشوقة؟",
+        options: [
+          "(أ) سرد جميع تفاصيل الموضوع ونتائجه",
+          "(ب) طرح أسئلة مثيرة للانتباه أو مصادمة للقارئ",
+          "(ج) كتابة العنوان مرة أخرى في السطر الأول",
+          "(د) نسخ الفقرة الختامية ووضعها في البداية"
+        ],
+        answer: "(ب) طرح أسئلة مثيرة للانتباه أو مصادمة للقارئ",
+        hint: "إثارة التساؤلات أو التحديات الذهنية هي إحدى أقوى وسائل شد انتباه المتلقي في البداية."
+      },
+      {
+        id: "mcq_52",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هو الترتيب الزمني (التاريخي) عند تسلسل الأفكار؟",
+        options: [
+          "(أ) البدء بالأحدث ثم الانتقال إلى الأقدم",
+          "(ب) البدء بالأقدم والانتهاء بالأحدث",
+          "(ج) عرض الأفكار بشكل عشوائي",
+          "(د) البدء بالسؤال ثم الإجابة عليه"
+        ],
+        answer: "(ب) البدء بالأقدم والانتهاء بالأحدث",
+        hint: "الترتيب الزمني التاريخي يبدأ تصاعدياً بالأحداث القديمة وصولاً للواقع الحاضر."
+      },
+      {
+        id: "mcq_53",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "أي من المواقف التالية تم ذكره في الكتاب كنموذج يحتاج إلى تركيز عالٍ في الاستماع؟",
+        options: ["(أ) الحديث الجانبي مع صديق", "(ب) خطبة الجمعة", "(ج) سماع أصوات الطبيعة", "(د) مشاهدة التلفاز للتسلية"],
+        answer: "(ب) خطبة الجمعة",
+        hint: "المواقف الرسمية والتوجيهية كالمحاضرات وخطب الجمعة تتطلب تركيزاً وإنصاتاً كاملاً لاستيعاب الأفكار."
+      },
+      {
+        id: "mcq_54",
+        type: "mcq",
+        category: "mcq",
+        tag: "الاختيار من متعدد",
+        question: "ما هو التصرف الصحيح الذي يدل على إظهار ملامح الفهم أثناء الاستماع؟",
+        options: [
+          "(أ) مقاطعة المتحدث لتصحيح أخطائه فوراً",
+          "(ب) النظر في الهاتف أثناء الحديث",
+          "(ج) التفاعل بتعبيرات الوجه والنظر للمتحدث",
+          "(د) إغلاق العينين للتركيز الشديد"
+        ],
+        answer: "(ج) التفاعل بتعبيرات الوجه والنظر للمتحدث",
+        hint: "الاتصال البصري وهز الرأس وتفاعلات الوجه هي مؤشرات لغة الجسد الدالة على المتابعة والاهتمام."
+      },
+
+      // ==== الصح والخطأ ====
+      {
+        id: "tf_1",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "المجرور بحرف الجر والمجرور بالإضافة هما نوعا المتممات المجرورة.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، المجرورات نوعان: المجرور بحرف الجر والمجرور بالإضافة."
+      },
+      {
+        id: "tf_2",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "تدخل (إن وأخواتها) على الجملة الاسمية فتنصب المبتدأ وترفع الخبر.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، الحروف الناسخة تنصب المبتدأ (اسماً لها) وترفع الخبر (خبراً لها)."
+      },
+      {
+        id: "tf_3",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "نائب الفاعل هو اسم منصوب يحل محل الفاعل المحذوف.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، نائب الفاعل هو اسم مرفوع (وليس منصوباً) يحل محل الفاعل بعد بنائه للمجهول."
+      },
+      {
+        id: "tf_4",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "المضاف إليه يكون دائماً مجروراً.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، المضاف إليه من مجرورات الأسماء الدائمة."
+      },
+      {
+        id: "tf_5",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "علامة جر الأسماء الخمسة هي الكسرة.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، الأسماء الخمسة تجر بالياء نيابة عن الكسرة."
+      },
+      {
+        id: "tf_6",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "تساعد علامات الترقيم القارئ على معرفة مواضع الوقف والتنغيم المناسب للجملة.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، علامات الترقيم تسهل القراءة وتوضح المعاني وتحدد النبر والتنغيم والوقف."
+      },
+      {
+        id: "tf_7",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "همزة الوصل تنطق دائماً سواء في بداية الكلام أو عند وصله بما قبله.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، همزة الوصل تنطق في بداية الكلام وتسقط لفظاً (لا تنطق) عند وصلها بما قبلها."
+      },
+      {
+        id: "tf_8",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "كلمة (أخذ) تبدأ بهمزة وصل لأنها فعل ماضٍ ثلاثي.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، الماضي الثلاثي المهموز الفاء (مثل أخذ، أكل) همزته همزة قطع دائماً."
+      },
+      {
+        id: "tf_9",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "السجع هو توافق أواخر الجمل في الحرف الأخير.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، السجع هو توافق فواصل الجمل النثرية في الحرف الأخير مما يعطي جرساً موسيقياً."
+      },
+      {
+        id: "tf_10",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "همزة (الـ) التعريف تعتبر دائماً همزة وصل.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، ال التعريف همزتها همزة وصل في جميع الحالات."
+      },
+      {
+        id: "tf_11",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الفعل الأمر من الفعل الثلاثي (مثل: اكتب) همزته همزة قطع.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، أمر الفعل الثلاثي (مثل: اكتب، اسمع، انظر) همزته همزة وصل."
+      },
+      {
+        id: "tf_12",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "جميع الأسماء همزتها همزة قطع ما عدا مجموعة محددة (مثل: ابن، اسم، امرؤ).",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، جميع الأسماء في اللغة العربية تبدأ بهمزة قطع ما عدا الأسماء العشرة المسموعة عن العرب."
+      },
+      {
+        id: "tf_13",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "السكون هو أقوى من الفتحة في ميزان الحركات.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، السكون هو أضعف الحركات على الإطلاق، والفتحة أقوى منه."
+      },
+      {
+        id: "tf_14",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الهمزة المتطرفة تتأثر بحركة الحرف الذي قبلها فقط، ولا تؤثر حركتها في رسمها.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، ترسم الهمزة المتطرفة على حرف يناسب حركة الحرف السابق لها مباشرة."
+      },
+      {
+        id: "tf_15",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "عند تنوين كلمة (سماء) تنوين نصب، نضيف ألفاً بعدها فتصبح (سماءاً).",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، القاعدة الإملائية تمنع وقوع الهمزة بين ألفين، وتكتب كالتالي: (سماءً)."
+      },
+      {
+        id: "tf_16",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الكسرة تشبه حرف الياء، والضمة تشبه حرف الواو في الرسم الإملائي.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، يناسب الكسرة الياء (النبرة)، ويناسب الضمة الواو، ويناسب الفتحة الألف."
+      },
+      {
+        id: "tf_17",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "النص الأدبي نص جمالي يعيد تشكيل الواقع بصورة خيالية مبتكرة معتمداً على الخيال العاطفي.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، هذا هو التعريف الجمالي والفني للنصوص الأدبية."
+      },
+      {
+        id: "tf_18",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "السجع هو توافق الفواصل في الجمل، أي تشابه الحروف الأخيرة.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، السجع هو تماثل الحروف الختامية في فواصل الكلام النثري."
+      },
+      {
+        id: "tf_19",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "البحر المتدارك هو البحر الشعري الذي اكتشفه الأخفش وتداركه على الخليل بن أحمد.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، واضع العروض الخليل تدارك الأخفش الأوسط عليه هذا البحر المسمى بالمتدارك أو الخبب."
+      },
+      {
+        id: "tf_20",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "القراءة للفهم والتفسير هي آخر خطوات قراءة النص الأدبي وتأتي بعد التحليل والتقويم.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، قراءة الفهم والتحليل تسبق عملية التقويم والتحليل الفني النقدي المعقد."
+      },
+      {
+        id: "tf_21",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "تحليل المحتوى الثقافي للنص يعني معرفة مدى تأثر ألفاظ النص وصوره ببيئة الأديب.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، الثقافة والبيئة تنعكسان على مفردات وصور وتراكيب النص الأدبي."
+      },
+      {
+        id: "tf_22",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "التشبيه والاستعارة والمجاز تُصنف ضمن (الصور الخيالية) في البنية البلاغية.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، هذه العناصر البيانية تمثل ركائز التصوير الجمالي والخيالي في البلاغة."
+      },
+      {
+        id: "tf_23",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "النص الأدبي يركز على الحقائق والأرقام بدقة متناهية دون اهتمام بالعاطفة.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، هذا وصف النص العلمي، بينما النص الأدبي يرتكز أساساً على العاطفة والتأثير والخيال."
+      },
+      {
+        id: "tf_24",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الكلمات في اللغة العربية قد تشترك في المعنى العام ولكنها تختلف في دلالاتها الدقيقة حسب السياق.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، المترادفات لها فروق دلالية دقيقة تتضح من سياق التركيب اللغوي."
+      },
+      {
+        id: "tf_25",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "تعتمد كتابة المذكرات الأدبية على سرد الأحداث وتصوير المواقف مع إبراز العواطف والانفعالات.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، المذكرات الأدبية تزاوج بين الحقيقة الواقعية والتعبير الوجداني الفني للكاتب."
+      },
+      {
+        id: "tf_26",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "تتأثر القدرة على كتابة المذكرات بمدى مهارة الكاتب في الوصف الأدبي.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، التمكن من مهارات الوصف وعناصر القصة يعطي المذكرات رونقاً وتأثيراً أكبر."
+      },
+      {
+        id: "tf_27",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "من مهارات المحافظة على استمرارية الحديث تجنب تخطئة الآخرين بأسلوب مباشر.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، اللباقة والكياسة وتجنب النقد الصريح يساهم في إنجاح التواصل الشفهي."
+      },
+      {
+        id: "tf_28",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الخامسة: الترتيب الصحيح لعلامات الترقيم يساهم في كشف وتأكيد المعاني المستترة للنص.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، علامات الترقيم تقوم مقام نبرات الصوت وإشارات اليد في التعبير الشفوي."
+      },
+      {
+        id: "tf_29",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "المقدمة هي العنصر الفني الذي يحتوي على العرض والنتائج بالتفصيل.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، العرض أو جسم الموضوع هو الذي يتناول التفاصيل والمحاور الأساسية، بينما المقدمة هي التمهيد."
+      },
+      {
+        id: "tf_30",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "(لعل) هو فعل ناسخ يفيد الترجي.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، (لعل) حرف ناسخ من أخوات إن (وليس فعلاً ناسخاً)."
+      },
+      {
+        id: "tf_31",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الخبر هو الاسم الذي يتمم مع المبتدأ معنى الجملة الاسمية.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، المبتدأ يحتاج إلى خبر لتكتمل الفائدة والجملة المفيدة."
+      },
+      {
+        id: "tf_32",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "أدوات الشرط الجازمة تجزم فعلين مضارعين: فعل الشرط وجواب الشرط.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، مثل (إن، مَنْ، ما) التي تتطلب فعلاً وجواباً مجزومين."
+      },
+      {
+        id: "tf_33",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الفعل المضارع يكون مرفوعاً دائماً حتى لو سبقته أداة نصب أو جزم.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، ينصب المضارع إذا سبقته أداة نصب ويجزم إذا سبقته أداة جزم."
+      },
+      {
+        id: "tf_34",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "علامة جزم الفعل المضارع المعتل الآخر هي حذف حرف العلة.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، يحذف حرف العلة (الألف، الواو، الياء) من آخره نيابة عن السكون."
+      },
+      {
+        id: "tf_35",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "أعراف الكتابة تهدف إلى تنظيم المادة المكتوبة ومساعدة القارئ على الفهم.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، العناوين، الجداول، الفواصل والخطوط البارزة كلها تنظم المادة المكتوبة للعين والذهن."
+      },
+      {
+        id: "tf_36",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "التلخيص في نهاية الفصول يساعد القارئ على تثبيت المعلومات والمراجعة المركزة.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، تعد الملخصات والرسومات والخرائط أدوات مساندة لتثبيت الذاكرة وتنشيطها."
+      },
+      {
+        id: "tf_37",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "التأكد من الفهم يتم فقط عن طريق إعادة قراءة الكتاب كاملاً.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، يمكن التأكد من الفهم عبر التسميع الذاتي، أو الإجابة على الأسئلة التدريبية والملخصات."
+      },
+      {
+        id: "tf_38",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "من أسئلة ما بعد القراءة السؤال عن سعر الكتاب ومكان بيعه.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، أسئلة ما بعد القراءة تركز على مدى كفاية الإجابات، وصحة الفهم، والملخصات المفيدة."
+      },
+      {
+        id: "tf_39",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "من العناصر الفنية للقصة تحديد الزمان والمكان.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، الزمان والمكان هما مسرح الأحداث الحيوية والقصصية التي تبنى عليها الحبكة."
+      },
+      {
+        id: "tf_40",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "يمكن استخدام استراتيجية (شجرة الذاكرة) لتصميم مخطط للموضوع.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، شجرة الذاكرة تساعد في تشعب وتصنيف الأفكار بشكل مرئي منظم."
+      },
+      {
+        id: "tf_41",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "التخطيط ليس جزءاً أساسياً في إعداد البحوث والدراسات العلمية.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، التخطيط والتصميم وبناء مخططات الأفكار هي عماد إنجاح البحوث والدراسات العلمية."
+      },
+      {
+        id: "tf_42",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "من أساليب المقدمة المشوقة استخدام اقتباس مقولة بليغة متعلقة بالموضوع.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، اقتباس المقولات البليغة والآيات الكريمة يعزز المقدمة ويجذب انتباه القارئ."
+      },
+      {
+        id: "tf_43",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الخاتمة الجيدة هي التي تتجاوز صفحتين أو أكثر لضمان شمولية الموضوع.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، الخاتمة يجب أن تكون موجزة ومكثفة تلخص النتائج أو تطرح التطلعات النهائية."
+      },
+      {
+        id: "tf_44",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الإنصات هو مجرد سماع الأصوات دون تركيز أو فهم.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، الإنصات هو درجة متقدمة من الاستماع الواعي المصحوب بالتركيز والرغبة في الفهم والتحليل."
+      },
+      {
+        id: "tf_45",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "الاستماع الجيد مهارة تتطلب الانتباه والتركيز وليست مجرد عملية فسيولوجية.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "صح ✓",
+        hint: "صحيح، السمع هو العملية الفسيولوجية، بينما الاستماع والإنصات هما مهارتان عقليتان مكتسبتان."
+      },
+      {
+        id: "tf_46",
+        type: "mcq",
+        category: "tf",
+        tag: "الصح والخطأ",
+        question: "من النصائح لتكون مستمعاً جيداً أن تبحث عن الأخطاء في كلام المتحدث لتنتقده.",
+        options: ["صح ✓", "خطأ ✗"],
+        answer: "خطأ ✗",
+        hint: "خاطئ، المستمع الجيد يستمع بهدف الفهم وتوسيع الأفق وليس لرصد العثرات والانتقاد الهدام."
+      },
+
+      // ==== MATCH (25 pairs split in groups of 5) ====
+      // المجموعة الأولى: النحو والصرف
+      {
+        id: "match_1",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الأولى: النحو والصرف",
+        phrase: "الضمة",
+        options: [
+          "علامة رفع المفرد وجمع التكسير",
+          "علامة رفع المثنى",
+          "علامة رفع الأسماء الخمسة وجمع المذكر السالم",
+          "اسم مرفوع بعد فعل مبني للمجهول",
+          "اسم مرفوع يدل على من قام بالفعل"
+        ],
+        answer: "علامة رفع المفرد وجمع التكسير",
+        hint: "الحركة الأصلية للرفع وتناسب الاسم المفرد وجمع التكسير وجمع المؤنث السالم."
+      },
+      {
+        id: "match_2",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الأولى: النحو والصرف",
+        phrase: "الألف",
+        options: [
+          "علامة رفع المفرد وجمع التكسير",
+          "علامة رفع المثنى",
+          "علامة رفع الأسماء الخمسة وجمع المذكر السالم",
+          "اسم مرفوع بعد فعل مبني للمجهول",
+          "اسم مرفوع يدل على من قام بالفعل"
+        ],
+        answer: "علامة رفع المثنى",
+        hint: "علامة رفع فرعية تلحق بالاسم الدال على اثنين أو اثنتين."
+      },
+      {
+        id: "match_3",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الأولى: النحو والصرف",
+        phrase: "الواو",
+        options: [
+          "علامة رفع المفرد وجمع التكسير",
+          "علامة رفع المثنى",
+          "علامة رفع الأسماء الخمسة وجمع المذكر السالم",
+          "اسم مرفوع بعد فعل مبني للمجهول",
+          "اسم مرفوع يدل على من قام بالفعل"
+        ],
+        answer: "علامة رفع الأسماء الخمسة وجمع المذكر السالم",
+        hint: "حرف ينوب عن الضمة في الأسماء الخمسة وجمع المذكر السالم عند الرفع."
+      },
+      {
+        id: "match_4",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الأولى: النحو والصرف",
+        phrase: "نائب الفاعل",
+        options: [
+          "علامة رفع المفرد وجمع التكسير",
+          "علامة رفع المثنى",
+          "علامة رفع الأسماء الخمسة وجمع المذكر السالم",
+          "اسم مرفوع بعد فعل مبني للمجهول",
+          "اسم مرفوع يدل على من قام بالفعل"
+        ],
+        answer: "اسم مرفوع بعد فعل مبني للمجهول",
+        hint: "يسند إليه الفعل ويأخذ أحكام الفاعل الإعرابية بعد حذف الفاعل الأصلي."
+      },
+      {
+        id: "match_5",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الأولى: النحو والصرف",
+        phrase: "الفاعل",
+        options: [
+          "علامة رفع المفرد وجمع التكسير",
+          "علامة رفع المثنى",
+          "علامة رفع الأسماء الخمسة وجمع المذكر السالم",
+          "اسم مرفوع بعد فعل مبني للمجهول",
+          "اسم مرفوع يدل على من قام بالفعل"
+        ],
+        answer: "اسم مرفوع يدل على من قام بالفعل",
+        hint: "هو الركن المرفوع الثاني في الجملة الفعلية ويدل على من تلبس بالفعل أو اتصف به."
+      },
+
+      // المجموعة الثانية: علامات الترقيم
+      {
+        id: "match_6",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثانية: علامات الترقيم",
+        phrase: "النقطة (.)",
+        options: [
+          "توضع في نهاية الجملة تامة المعنى",
+          "توضع بعد الجمل الاستفهامية",
+          "توضع بعد جمل التعجب أو الدعاء أو التحذير",
+          "توضع بين الجمل المترابطة أو بعد المنادى",
+          "توضع بين جملتين تكون إحداهما سبباً للأخرى"
+        ],
+        answer: "توضع في نهاية الجملة تامة المعنى",
+        hint: "تنهي الفكرة تامة المعنى وتغلق الفقرة."
+      },
+      {
+        id: "match_7",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثانية: علامات الترقيم",
+        phrase: "علامة الاستفهام (؟)",
+        options: [
+          "توضع في نهاية الجملة تامة المعنى",
+          "توضع بعد الجمل الاستفهامية",
+          "توضع بعد جمل التعجب أو الدعاء أو التحذير",
+          "توضع بين الجمل المترابطة أو بعد المنادى",
+          "توضع بين جملتين تكون إحداهما سبباً للأخرى"
+        ],
+        answer: "توضع بعد الجمل الاستفهامية",
+        hint: "تختتم جملة السؤال بطلب الجواب."
+      },
+      {
+        id: "match_8",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثانية: علامات الترقيم",
+        phrase: "علامة التأثر (!)",
+        options: [
+          "توضع في نهاية الجملة تامة المعنى",
+          "توضع بعد الجمل الاستفهامية",
+          "توضع بعد جمل التعجب أو الدعاء أو التحذير",
+          "توضع بين الجمل المترابطة أو بعد المنادى",
+          "توضع بين جملتين تكون إحداهما سبباً للأخرى"
+        ],
+        answer: "توضع بعد جمل التعجب أو الدعاء أو التحذير",
+        hint: "تعبر عن المشاعر والانفعالات والدهشة أو الوعيد."
+      },
+      {
+        id: "match_9",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثانية: علامات الترقيم",
+        phrase: "الفاصلة (،)",
+        options: [
+          "توضع في نهاية الجملة تامة المعنى",
+          "توضع بعد الجمل الاستفهامية",
+          "توضع بعد جمل التعجب أو الدعاء أو التحذير",
+          "توضع بين الجمل المترابطة أو بعد المنادى",
+          "توضع بين جملتين تكون إحداهما سبباً للأخرى"
+        ],
+        answer: "توضع بين الجمل المترابطة أو بعد المنادى",
+        hint: "تفصل الجمل القصيرة المتصلة بالمعنى لتنظيم النفس أثناء القراءة."
+      },
+      {
+        id: "match_10",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثانية: علامات الترقيم",
+        phrase: "الفاصلة المنقوطة (؛)",
+        options: [
+          "توضع في نهاية الجملة تامة المعنى",
+          "توضع بعد الجمل الاستفهامية",
+          "توضع بعد جمل التعجب أو الدعاء أو التحذير",
+          "توضع بين الجمل المترابطة أو بعد المنادى",
+          "توضع بين جملتين تكون إحداهما سبباً للأخرى"
+        ],
+        answer: "توضع بين جملتين تكون إحداهما سبباً للأخرى",
+        hint: "تربط بين السبب والنتيجة أو العلة والمعلول."
+      },
+
+      // المجموعة الثالثة: مهارات الاتصال اللغوي
+      {
+        id: "match_11",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثالثة: مهارات الاتصال اللغوي",
+        phrase: "القراءة",
+        options: [
+          "مهارة استقبال المعلومات من النص المكتوب",
+          "مهارة إنتاج نص مكتوب",
+          "مهارة إنتاج لغة منطوقة",
+          "مهارة استقبال لغة منطوقة",
+          "مجموع المهارات الأربع (قراءة، كتابة، تحدث، استماع)"
+        ],
+        answer: "مهارة استقبال المعلومات من النص المكتوب",
+        hint: "عملية عقلية تهدف إلى فك الرموز المكتوبة وفهم دلالاتها."
+      },
+      {
+        id: "match_12",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثالثة: مهارات الاتصال اللغوي",
+        phrase: "الكتابة",
+        options: [
+          "مهارة استقبال المعلومات من النص المكتوب",
+          "مهارة إنتاج نص مكتوب",
+          "مهارة إنتاج لغة منطوقة",
+          "مهارة استقبال لغة منطوقة",
+          "مجموع المهارات الأربع (قراءة، كتابة، تحدث، استماع)"
+        ],
+        answer: "مهارة إنتاج نص مكتوب",
+        hint: "مهارة إرسال وإنتاج تهدف إلى تدوين الأفكار برموز بصرية إملائية صحيحة."
+      },
+      {
+        id: "match_13",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثالثة: مهارات الاتصال اللغوي",
+        phrase: "التحدث",
+        options: [
+          "مهارة استقبال المعلومات من النص المكتوب",
+          "مهارة إنتاج نص مكتوب",
+          "مهارة إنتاج لغة منطوقة",
+          "مهارة استقبال لغة منطوقة",
+          "مجموع المهارات الأربع (قراءة، كتابة، تحدث، استماع)"
+        ],
+        answer: "مهارة إنتاج لغة منطوقة",
+        hint: "مهارة شفهية تهدف إلى التعبير عن الأفكار والمشاعر بالصوت والنطق والبيان شفهياً."
+      },
+      {
+        id: "match_14",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثالثة: مهارات الاتصال اللغوي",
+        phrase: "الاستماع",
+        options: [
+          "مهارة استقبال المعلومات من النص المكتوب",
+          "مهارة إنتاج نص مكتوب",
+          "مهارة إنتاج لغة منطوقة",
+          "مهارة استقبال لغة منطوقة",
+          "مجموع المهارات الأربع (قراءة، كتابة، تحدث، استماع)"
+        ],
+        answer: "مهارة استقبال لغة منطوقة",
+        hint: "مهارة استقبال وفهم وتفسير الأصوات والرموز المنطوقة بتركيز وانتباه وعناية."
+      },
+      {
+        id: "match_15",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الثالثة: مهارات الاتصال اللغوي",
+        phrase: "الاتصال اللغوي",
+        options: [
+          "مهارة استقبال المعلومات من النص المكتوب",
+          "مهارة إنتاج نص مكتوب",
+          "مهارة إنتاج لغة منطوقة",
+          "مهارة استقبال لغة منطوقة",
+          "مجموع المهارات الأربع (قراءة، كتابة، تحدث، استماع)"
+        ],
+        answer: "مجموع المهارات الأربع (قراءة، كتابة، تحدث، استماع)",
+        hint: "المنظومة المتكاملة للمهارات اللغوية الأربع التي يتكامل بها تواصل البشر."
+      },
+
+      // المجموعة الرابعة: الفنون الأدبية والوظيفية
+      {
+        id: "match_16",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الرابعة: الفنون الأدبية والوظيفية",
+        phrase: "المذكرات الأدبية",
+        options: [
+          "نقل تجربة شخصية عايشها الكاتب في مرحلة من مراحله",
+          "رصد آراء الشباب وأولياء الأمور حول قضية معينة",
+          "كتابة تقرير إلى وزير التعليم عن أوضاع المدرسة",
+          "دراسة ظاهرة مثل البطالة وآثارها النفسية",
+          "تصوير الانفعالات والأحداث (مثل قصة نهاية مدمن)"
+        ],
+        answer: "نقل تجربة شخصية عايشها الكاتب في مرحلة من مراحله",
+        hint: "فن أدبي ذاتي يسرد فيه الأديب حقائق ومواقف واقعية ومشاعر حية عاشها بنفسه."
+      },
+      {
+        id: "match_17",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الرابعة: الفنون الأدبية والوظيفية",
+        phrase: "التحقيق الصحفي",
+        options: [
+          "نقل تجربة شخصية عايشها الكاتب في مرحلة من مراحله",
+          "رصد آراء الشباب وأولياء الأمور حول قضية معينة",
+          "كتابة تقرير إلى وزير التعليم عن أوضاع المدرسة",
+          "دراسة ظاهرة مثل البطالة وآثارها النفسية",
+          "تصوير الانفعالات والأحداث (مثل قصة نهاية مدمن)"
+        ],
+        answer: "رصد آراء الشباب وأولياء الأمور حول قضية معينة",
+        hint: "عمل صحفي استقصائي يستطلع آراء الأطراف المختلفة حول قضية تهم المجتمع."
+      },
+      {
+        id: "match_18",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الرابعة: الفنون الأدبية والوظيفية",
+        phrase: "تقرير إداري",
+        options: [
+          "نقل تجربة شخصية عايشها الكاتب في مرحلة من مراحله",
+          "رصد آراء الشباب وأولياء الأمور حول قضية معينة",
+          "كتابة تقرير إلى وزير التعليم عن أوضاع المدرسة",
+          "دراسة ظاهرة مثل البطالة وآثارها النفسية",
+          "تصوير الانفعالات والأحداث (مثل قصة نهاية مدمن)"
+        ],
+        answer: "كتابة تقرير إلى وزير التعليم عن أوضاع المدرسة",
+        hint: "مستند رسمي إداري هادف يتضمن معلومات وحقائق وتوصيات ترفع للمسؤولين بدقة علمية."
+      },
+      {
+        id: "match_19",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الرابعة: الفنون الأدبية والوظيفية",
+        phrase: "المقال الاجتماعي",
+        options: [
+          "نقل تجربة شخصية عايشها الكاتب في مرحلة من مراحله",
+          "رصد آراء الشباب وأولياء الأمور حول قضية معينة",
+          "كتابة تقرير إلى وزير التعليم عن أوضاع المدرسة",
+          "دراسة ظاهرة مثل البطالة وآثارها النفسية",
+          "تصوير الانفعالات والأحداث (مثل قصة نهاية مدمن)"
+        ],
+        answer: "دراسة ظاهرة مثل البطالة وآثارها النفسية",
+        hint: "طرح أدبي وعلمي يناقش ظواهر وتحديات وقضايا تمس تماسك وبناء المجتمع مباشرة."
+      },
+      {
+        id: "match_20",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الرابعة: الفنون الأدبية والوظيفية",
+        phrase: "القصة",
+        options: [
+          "نقل تجربة شخصية عايشها الكاتب في مرحلة من مراحله",
+          "رصد آراء الشباب وأولياء الأمور حول قضية معينة",
+          "كتابة تقرير إلى وزير التعليم عن أوضاع المدرسة",
+          "دراسة ظاهرة مثل البطالة وآثارها النفسية",
+          "تصوير الانفعالات والأحداث (مثل قصة نهاية مدمن)"
+        ],
+        answer: "تصوير الانفعالات والأحداث (مثل قصة نهاية مدمن)",
+        hint: "فن نثري سردي يسير وفق تسلسل زماني ومكاني حول حدث ذي عقدة وحل."
+      },
+
+      // المجموعة الخامسة: العناصر الفنية والتخطيط
+      {
+        id: "match_21",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الخامسة: العناصر الفنية والتخطيط",
+        phrase: "المقدمة",
+        options: [
+          "عنصر فني يشمل عادة تعريفاً أو مدخلاً للموضوع",
+          "عنصر فني يتناول تفاصيل الموضوع ومحاوره الأساسية",
+          "عنصر فني يلخص الموضوع أو يطرح التطلعات المستقبلية",
+          "مخطط بصري لتشعيب الأفكار يشبه الشجرة",
+          "مخطط بصري يستخدم لتنظيم الأسباب والنتائج أو الأفكار"
+        ],
+        answer: "عنصر فني يشمل عادة تعريفاً أو مدخلاً للموضوع",
+        hint: "العنصر التمهيدي في مستهل النص لتهيئة القارئ لمضمون المقال أو البحث."
+      },
+      {
+        id: "match_22",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الخامسة: العناصر الفنية والتخطيط",
+        phrase: "العرض (جسم الموضوع)",
+        options: [
+          "عنصر فني يشمل عادة تعريفاً أو مدخلاً للموضوع",
+          "عنصر فني يتناول تفاصيل الموضوع ومحاوره الأساسية",
+          "عنصر فني يلخص الموضوع أو يطرح التطلعات المستقبلية",
+          "مخطط بصري لتشعيب الأفكار يشبه الشجرة",
+          "مخطط بصري يستخدم لتنظيم الأسباب والنتائج أو الأفكار"
+        ],
+        answer: "عنصر فني يتناول تفاصيل الموضوع ومحاوره الأساسية",
+        hint: "صلب الموضوع وقلبه الذي يستعرض فيه الكاتب التفاصيل والتحليلات والفقرات الموضحة بالعمق."
+      },
+      {
+        id: "match_23",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الخامسة: العناصر الفنية والتخطيط",
+        phrase: "الخاتمة",
+        options: [
+          "عنصر فني يشمل عادة تعريفاً أو مدخلاً للموضوع",
+          "عنصر فني يتناول تفاصيل الموضوع ومحاوره الأساسية",
+          "عنصر فني يلخص الموضوع أو يطرح التطلعات المستقبلية",
+          "مخطط بصري لتشعيب الأفكار يشبه الشجرة",
+          "مخطط بصري يستخدم لتنظيم الأسباب والنتائج أو الأفكار"
+        ],
+        answer: "عنصر فني يلخص الموضوع أو يطرح التطلعات المستقبلية",
+        hint: "الفقرة الأخيرة المكثفة التي تنهي النص وتلخص أهم مخرجاته أو التوصيات."
+      },
+      {
+        id: "match_24",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الخامسة: العناصر الفنية والتخطيط",
+        phrase: "شجرة الذاكرة",
+        options: [
+          "عنصر فني يشمل عادة تعريفاً أو مدخلاً للموضوع",
+          "عنصر فني يتناول تفاصيل الموضوع ومحاوره الأساسية",
+          "عنصر فني يلخص الموضوع أو يطرح التطلعات المستقبلية",
+          "مخطط بصري لتشعيب الأفكار يشبه الشجرة",
+          "مخطط بصري يستخدم لتنظيم الأسباب والنتائج أو الأفكار"
+        ],
+        answer: "مخطط بصري لتشعيب الأفكار يشبه الشجرة",
+        hint: "طريقة رسم بصرية ممتازة تبدأ بجذع الفكرة الأساسية وتتفرع لعدة أغصان تمثل الأفكار الفرعية."
+      },
+      {
+        id: "match_25",
+        type: "match",
+        category: "match",
+        tag: "المزاوجة - المجموعة الخامسة: العناصر الفنية والتخطيط",
+        phrase: "هيكل السمكة",
+        options: [
+          "عنصر فني يشمل عادة تعريفاً أو مدخلاً للموضوع",
+          "عنصر فني يتناول تفاصيل الموضوع ومحاوره الأساسية",
+          "عنصر فني يلخص الموضوع أو يطرح التطلعات المستقبلية",
+          "مخطط بصري لتشعيب الأفكار يشبه الشجرة",
+          "مخطط بصري يستخدم لتنظيم الأسباب والنتائج أو الأفكار"
+        ],
+        answer: "مخطط بصري يستخدم لتنظيم الأسباب والنتائج أو الأفكار",
+        hint: "مخطط هيكلي رائع يفصل رأس القضية أو النتيجة على اليمين مع عظام السمكة كأسباب فرعية ومؤثرة."
+      }
+    ];
+  </script>
+
+  <!-- Fully Fledged Pure Vanilla JS Application Controller Engine -->
+  <script>
+    // Local state for interactive matchmaking
+    let currentRenderedQuestionId = null;
+    let colASelected = false;
+
+    // Application State Management Object
+    const appState = {
+      currentIndex: 0,
+      correctCount: 0,
+      wrongCounter: 0,
+      activeCategory: "all", // Filter selector value
+      isRandomMode: false,
+      answeredMap: {}, // To track user answers per question ID
+      bookmarks: [], // Question IDs array
+      activePool: [], // Currently filtered questions array
+      
+      save() {
+        localStorage.setItem("ecology_quiz_progress_v2", JSON.stringify({
+          currentIndex: this.currentIndex,
+          correctCount: this.correctCount,
+          wrongCounter: this.wrongCounter,
+          activeCategory: this.activeCategory,
+          isRandomMode: this.isRandomMode,
+          answeredMap: this.answeredMap,
+          bookmarks: this.bookmarks
+        }));
+      },
+      
+      load() {
+        const data = localStorage.getItem("ecology_quiz_progress_v2");
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            this.currentIndex = parsed.currentIndex || 0;
+            this.correctCount = parsed.correctCount || 0;
+            this.wrongCounter = parsed.wrongCounter || 0;
+            this.activeCategory = parsed.activeCategory || "all";
+            this.isRandomMode = !!parsed.isRandomMode;
+            this.answeredMap = parsed.answeredMap || {};
+            this.bookmarks = parsed.bookmarks || [];
+          } catch (e) {
+            this.reset();
+          }
+        }
+      },
+      
+      reset() {
+        this.currentIndex = 0;
+        this.correctCount = 0;
+        this.wrongCounter = 0;
+        this.activeCategory = "all";
+        this.isRandomMode = false;
+        this.answeredMap = {};
+        this.bookmarks = [];
+        this.save();
+      }
+    };
+
+    // UI Toast Notification Helper Engine
+    function showToast(message, type = 'info') {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "p-4 rounded-xl shadow-lg border text-xs sm:text-sm font-extrabold flex items-center space-x-2 space-x-reverse transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white";
+      
+      let icon = '<i class="fa-solid fa-info text-blue-500"></i>';
+      if (type === 'success') {
+        icon = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+      } else if (type === 'warning') {
+        icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+      } else if (type === 'danger') {
+        icon = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+      }
+      
+      toast.innerHTML = `
+        <div class="flex-shrink-0">${icon}</div>
+        <div class="flex-1">${message}</div>
+      `;
+      
+      container.appendChild(toast);
+      
+      // Animate entry
+      setTimeout(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      }, 50);
+      
+      // Auto Dismiss after 3s
+      setTimeout(() => {
+        toast.classList.add("translate-y-2", "opacity-0");
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+
+    // Translate database categories nicely
+    function getCategoryName(val) {
+      switch (val) {
+        case "mcq": return "الاختيار من متعدد";
+        case "tf": return "الصح والخطأ";
+        case "match": return "المزاوجة التوصيلية";
+        default: return "مراجعة عامة";
+      }
+    }
+
+    // Durstenfeld Shuffle algorithm for randomizing without state distortion
+    function shuffleArray(array) {
+      const arrCopy = [...array];
+      for (let i = arrCopy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arrCopy[i], arrCopy[j]] = [arrCopy[j], arrCopy[i]];
+      }
+      return arrCopy;
+    }
+
+    // Build Active Pool of questions based on filters
+    function prepareActivePool() {
+      let filtered = [];
+      if (appState.activeCategory === "all") {
+        filtered = [...ALL_QUESTIONS];
+      } else if (appState.activeCategory === "bookmarked") {
+        filtered = ALL_QUESTIONS.filter(q => appState.bookmarks.includes(q.id));
+      } else {
+        filtered = ALL_QUESTIONS.filter(q => q.category === appState.activeCategory);
+      }
+      
+      if (appState.isRandomMode) {
+        appState.activePool = shuffleArray(filtered);
+      } else {
+        appState.activePool = filtered;
+      }
+      
+      // Sanity checks on index boundaries
+      if (appState.currentIndex >= appState.activePool.length) {
+        appState.currentIndex = 0;
+      }
+    }
+
+    // Primary UI Render loop
+    function renderApp() {
+      // Stats updating
+      const totalInPool = appState.activePool.length;
+      
+      // Correctly computed totals based on answered Map in the active pool
+      let answeredCount = 0;
+      appState.activePool.forEach(q => {
+        if (appState.answeredMap[q.id] !== undefined) {
+          answeredCount++;
+        }
+      });
+      
+      const progressPercent = totalInPool > 0 ? Math.round((answeredCount / totalInPool) * 100) : 0;
+      
+      document.getElementById("progressPercent").innerText = progressPercent + "%";
+      document.getElementById("progressBarPercent").innerText = progressPercent + "%";
+      document.getElementById("progressBarLabel").innerText = `تمت الإجابة على ${answeredCount} من ${totalInPool}`;
+      document.getElementById("progressFill").style.width = progressPercent + "%";
+      
+      document.getElementById("correctCounter").innerText = appState.correctCount;
+      document.getElementById("wrongCounter").innerText = appState.wrongCounter;
+      
+      // Empty State/Completion view check
+      const quizCard = document.getElementById("quizCard");
+      const completedView = document.getElementById("completedView");
+      
+      if (totalInPool === 0) {
+        quizCard.classList.add("hidden");
+        completedView.classList.remove("hidden");
+        
+        if (appState.activeCategory === "bookmarked") {
+          document.getElementById("completedMsg").innerText = "لا يوجد أي أسئلة مضافة في قائمتك المفضلة المرجعية حالياً. تصفح الفصول وأضف بعض الأسئلة باستخدام أيقونة العلامة المرجعية.";
+          document.getElementById("restartSectionBtn").classList.add("hidden");
+        } else {
+          document.getElementById("completedMsg").innerText = "لم يتم العثور على أسئلة في الفئة المحددة حالياً.";
+          document.getElementById("restartSectionBtn").classList.add("hidden");
+        }
+        return;
+      } else {
+        document.getElementById("restartSectionBtn").classList.remove("hidden");
+      }
+      
+      // If completed section fully
+      if (answeredCount === totalInPool && totalInPool > 0 && appState.currentIndex >= totalInPool) {
+        quizCard.classList.add("hidden");
+        completedView.classList.remove("hidden");
+        document.getElementById("completedMsg").innerText = "رائع جداً! لقد أكملت الإجابة على جميع الأسئلة المتوفرة في هذا القسم بنجاح تام.";
+        return;
+      } else {
+        quizCard.classList.remove("hidden");
+        completedView.classList.add("hidden");
+      }
+      
+      // Load current question safely
+      const q = appState.activePool[appState.currentIndex];
+      if (!q) {
+        appState.currentIndex = 0;
+        renderApp();
+        return;
+      }
+
+      // Safe state resetting on question transition
+      if (currentRenderedQuestionId !== q.id) {
+        currentRenderedQuestionId = q.id;
+        colASelected = false;
+      }
+      
+      // Set Header Tags
+      document.getElementById("questionCategory").innerText = getCategoryName(q.category);
+      document.getElementById("questionNumber").innerText = `السؤال ${appState.currentIndex + 1} / ${totalInPool}`;
+      
+      // Handle Bookmark State representation
+      const isBookmarked = appState.bookmarks.includes(q.id);
+      const bookmarkBtn = document.getElementById("bookmarkBtn");
+      if (isBookmarked) {
+        bookmarkBtn.innerHTML = '<i class="fa-solid fa-bookmark text-amber-500"></i>';
+        bookmarkBtn.title = "محذوف من المفضلة";
+      } else {
+        bookmarkBtn.innerHTML = '<i class="fa-regular fa-bookmark"></i>';
+        bookmarkBtn.title = "أضف للمفردات المفضلة المرجعية";
+      }
+      
+      const optionsContainer = document.getElementById("optionsContainer");
+      optionsContainer.innerHTML = "";
+      
+      const savedUserAnswer = appState.answeredMap[q.id];
+      const isAnswered = savedUserAnswer !== undefined;
+
+      // Handle custom interactive match questions template
+      if (q.type === "match") {
+        document.getElementById("questionText").innerHTML = `
+          <div class="text-slate-800 dark:text-slate-100 text-sm sm:text-base font-extrabold mb-2 text-right">
+            <span class="text-blue-500 font-black">أولاً:</span> قم بالضغط لتحديد المفهوم من العمود الأول <span class="text-blue-500 font-black">(أ)</span>، <span class="text-emerald-500 font-black">ثانياً:</span> اضغط على التعريف المقابل الصحيح له من العمود الثاني <span class="text-emerald-500 font-black">(ب)</span>:
+          </div>
+          <div class="text-slate-400 dark:text-slate-500 text-xs font-bold mb-4 text-right">تصنيف الفقرة: ${q.tag}</div>
+        `;
+
+        // Render Column A and Column B containers - natively RTL oriented
+        const grid = document.createElement("div");
+        grid.className = "grid grid-cols-1 md:grid-cols-9 gap-4 w-full items-stretch";
+        grid.style.direction = "rtl";
+        grid.style.textAlign = "right";
+
+        // Column A layout (Phrases on the right for RTL)
+        const colAWrapper = document.createElement("div");
+        colAWrapper.className = "col-span-1 md:col-span-4 flex flex-col justify-start space-y-2";
+        colAWrapper.innerHTML = `<span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1 text-right">العمود (أ) - المفهوم</span>`;
+
+        const buttonA = document.createElement("button");
+        buttonA.id = "matchColA";
+        buttonA.className = "w-full text-right p-4 rounded-2xl border text-xs sm:text-sm font-extrabold flex items-center justify-between transition-all duration-300 focus:outline-none ";
+        buttonA.innerHTML = `
+          <span class="leading-relaxed flex-grow pl-2">${q.phrase}</span>
+          <span class="bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-xs font-bold px-2.5 py-1 rounded-lg">أ</span>
+        `;
+
+        if (isAnswered) {
+          buttonA.disabled = true;
+          buttonA.className += " bg-emerald-50 dark:bg-emerald-950/20 border-emerald-500 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300";
+        } else {
+          if (colASelected) {
+            buttonA.className += " bg-blue-50 dark:bg-blue-950/30 border-blue-500 dark:border-blue-400 ring-4 ring-blue-500/20 text-blue-900 dark:text-blue-100";
+          } else {
+            buttonA.className += " bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 animate-pulse";
+          }
+
+          buttonA.addEventListener("click", () => {
+            colASelected = !colASelected;
+            renderApp();
+          });
+        }
+        colAWrapper.appendChild(buttonA);
+
+        // Divider column
+        const divider = document.createElement("div");
+        divider.className = "hidden md:flex col-span-1 items-center justify-center text-slate-300 dark:text-slate-600";
+        divider.innerHTML = '<i class="fa-solid fa-right-left text-lg"></i>';
+
+        // Column B layout (Meanings on the left for RTL)
+        const colBWrapper = document.createElement("div");
+        colBWrapper.className = "col-span-1 md:col-span-4 flex flex-col justify-start space-y-2";
+        colBWrapper.innerHTML = `<span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1 text-right">العمود (ب) - التعريف المقابل</span>`;
+
+        q.options.forEach((opt) => {
+          const buttonB = document.createElement("button");
+          buttonB.className = "w-full text-right p-4 rounded-2xl border text-xs sm:text-sm font-extrabold flex items-center justify-between transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 ";
+          
+          const textSpan = document.createElement("span");
+          textSpan.className = "leading-relaxed flex-grow pl-2 text-right";
+          textSpan.innerText = opt;
+          buttonB.appendChild(textSpan);
+          
+          const iconContainer = document.createElement("div");
+          iconContainer.className = "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ml-2";
+          buttonB.appendChild(iconContainer);
+          
+          buttonB.className += " bg-slate-50 hover:bg-slate-100/80 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100";
+          
+          if (isAnswered) {
+            buttonB.disabled = true;
+            const isCorrectOption = opt === q.answer;
+            const isUserSelected = opt === savedUserAnswer;
+            
+            if (isCorrectOption) {
+              buttonB.className = buttonB.className.replace("bg-slate-50", "").replace("dark:bg-slate-800", "");
+              buttonB.className += " border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 font-black";
+              iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500 dark:text-emerald-400 text-base"></i>';
+            } else if (isUserSelected) {
+              buttonB.className = buttonB.className.replace("bg-slate-50", "").replace("dark:bg-slate-800", "");
+              buttonB.className += " border-rose-500 dark:border-rose-400 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300";
+              iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500 dark:text-rose-400 text-base"></i>';
+            } else {
+              buttonB.className += " opacity-40";
+            }
+          } else {
+            buttonB.addEventListener("click", () => {
+              if (!colASelected) {
+                showToast("الرجاء تحديد المفهوم من العمود (أ) أولاً بالضغط عليه!", "warning");
+                // Pulse feedback to Column A button
+                const btnA = document.getElementById("matchColA");
+                if (btnA) {
+                  btnA.classList.add("ring-4", "ring-rose-500/50", "border-rose-500");
+                  setTimeout(() => {
+                    btnA.classList.remove("ring-4", "ring-rose-500/50", "border-rose-500");
+                  }, 1000);
+                }
+                return;
+              }
+              handleAnswerSelection(opt, q, buttonB);
+            });
+          }
+          colBWrapper.appendChild(buttonB);
+        });
+
+        grid.appendChild(colAWrapper);
+        grid.appendChild(divider);
+        grid.appendChild(colBWrapper);
+        optionsContainer.appendChild(grid);
+
+      } else {
+        // STANDARD MCQ AND TRUE/FALSE RENDERING
+        document.getElementById("questionText").innerHTML = q.question;
+        
+        q.options.forEach((opt) => {
+          const button = document.createElement("button");
+          button.className = "w-full text-right p-4 rounded-2xl border text-xs sm:text-sm font-extrabold flex items-center justify-between transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 ";
+          
+          const textSpan = document.createElement("span");
+          textSpan.className = "leading-relaxed flex-grow pr-2";
+          textSpan.innerText = opt;
+          button.appendChild(textSpan);
+          
+          const iconContainer = document.createElement("div");
+          iconContainer.className = "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mr-2";
+          button.appendChild(iconContainer);
+          
+          // Base styling for light/dark
+          button.className += " bg-slate-50 hover:bg-slate-100/80 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100";
+          
+          if (isAnswered) {
+            button.disabled = true; // Disable clicks since answered
+            
+            const isCorrectOption = opt === q.answer;
+            const isUserSelected = opt === savedUserAnswer;
+            
+            if (isCorrectOption) {
+              // Outline/Fill correct answer in emerald
+              button.className = button.className.replace("bg-slate-50", "").replace("dark:bg-slate-800", "");
+              button.className += " border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 font-black";
+              iconContainer.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500 dark:text-emerald-400 text-base"></i>';
+            } else if (isUserSelected) {
+              // Selected wrong choice highlighted in rose
+              button.className = button.className.replace("bg-slate-50", "").replace("dark:bg-slate-800", "");
+              button.className += " border-rose-500 dark:border-rose-400 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300";
+              iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500 dark:text-rose-400 text-base"></i>';
+            } else {
+              // Other wrong unselected choices slightly faded
+              button.className += " opacity-40";
+            }
+          } else {
+            // Regular un-clicked state
+            button.addEventListener("click", () => {
+              handleAnswerSelection(opt, q, button);
+            });
+          }
+          
+          optionsContainer.appendChild(button);
+        });
+      }
+      
+      // Toggle Dynamic Explanation and Hint UI Panel
+      const explanationPanel = document.getElementById("explanationPanel");
+      const nextBtn = document.getElementById("nextBtn");
+      
+      if (isAnswered) {
+        explanationPanel.classList.remove("hidden");
+        nextBtn.removeAttribute("disabled");
+        nextBtn.className = nextBtn.className.replace("text-slate-400 dark:text-slate-500", "bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/20");
+        
+        const isUserCorrect = savedUserAnswer === q.answer;
+        const explanationIconContainer = document.getElementById("explanationIconContainer");
+        
+        document.getElementById("explanationText").innerText = q.hint;
+        
+        if (isUserCorrect) {
+          explanationPanel.className = "transition-all duration-300 rounded-2xl p-5 border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-950/10";
+          explanationIconContainer.className = "w-8 h-8 rounded-lg flex items-center justify-center mt-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-500";
+          explanationIconContainer.innerHTML = '<i class="fa-solid fa-check"></i>';
+          document.getElementById("explanationTitle").innerText = "أحسنت! إجابة صحيحة وتحليل موفق";
+          document.getElementById("explanationTitle").className = "text-sm font-extrabold mb-1 text-emerald-800 dark:text-emerald-400";
+        } else {
+          explanationPanel.className = "transition-all duration-300 rounded-2xl p-5 border border-rose-200 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-950/10";
+          explanationIconContainer.className = "w-8 h-8 rounded-lg flex items-center justify-center mt-0.5 bg-rose-100 dark:bg-rose-950 text-rose-50";
+          explanationIconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+          document.getElementById("explanationTitle").innerText = "إجابة غير دقيقة! راجع المفهوم العلمي";
+          document.getElementById("explanationTitle").className = "text-sm font-extrabold mb-1 text-rose-800 dark:text-rose-400";
+        }
+      } else {
+        explanationPanel.classList.add("hidden");
+        nextBtn.setAttribute("disabled", "true");
+        nextBtn.className = "px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-extrabold text-sm transition-all duration-300 flex items-center space-x-2 space-x-reverse focus:outline-none disabled:cursor-not-allowed";
+      }
+    }
+
+    // Controller Answer selection state trigger
+    function handleAnswerSelection(selectedOption, question, element) {
+      if (appState.answeredMap[question.id] !== undefined) return;
+      
+      const isCorrect = selectedOption === question.answer;
+      appState.answeredMap[question.id] = selectedOption;
+      
+      if (isCorrect) {
+        appState.correctCount++;
+        soundManager.play(true);
+        showToast("إجابة صحيحة! أحسنت التقييم.", "success");
+      } else {
+        appState.wrongCounter++;
+        soundManager.play(false);
+        showToast(`إجابة غير صحيحة. الإجابة الصحيحة هي: ${question.answer}`, "danger");
+      }
+      
+      appState.save();
+      renderApp();
+    }
+
+    // Wire up all event listeners safely
+    function initializeEvents() {
+      // 1. Dark Mode Theme swapping
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      
+      // Auto detect user theme preferences safely on load
+      if (localStorage.getItem("ecology_dark_mode") === "true" || 
+          (!localStorage.getItem("ecology_dark_mode") && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      
+      themeToggleBtn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("ecology_dark_mode", isDark);
+        showToast(isDark ? "تم تفعيل الوضع الداكن" : "تم تفعيل الوضع الفاتح", "info");
+      });
+      
+      // 2. Bookmark toggle button click
+      document.getElementById("bookmarkBtn").addEventListener("click", () => {
+        const q = appState.activePool[appState.currentIndex];
+        if (!q) return;
+        
+        const idx = appState.bookmarks.indexOf(q.id);
+        if (idx > -1) {
+          appState.bookmarks.splice(idx, 1);
+          showToast("تمت إزالة السؤال من المفضلة المرجعية", "warning");
+        } else {
+          appState.bookmarks.push(q.id);
+          showToast("تمت إضافة السؤال للمفضلة المرجعية ⭐", "success");
+        }
+        
+        appState.save();
+        renderApp();
+      });
+      
+      // 3. Sequential vs Random button toggles
+      const seqModeBtn = document.getElementById("seqModeBtn");
+      const randModeBtn = document.getElementById("randModeBtn");
+      
+      function updateModeButtons() {
+        if (appState.isRandomMode) {
+          randModeBtn.className = "py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm";
+          seqModeBtn.className = "py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white";
+        } else {
+          seqModeBtn.className = "py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm";
+          randModeBtn.className = "py-2 text-xs font-bold rounded-lg transition-all duration-200 focus:outline-none text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white";
+        }
+      }
+      
+      seqModeBtn.addEventListener("click", () => {
+        if (!appState.isRandomMode) return;
+        appState.isRandomMode = false;
+        updateModeButtons();
+        prepareActivePool();
+        renderApp();
+        showToast("تم تفعيل نمط الترتيب المتسلسل للأسئلة", "info");
+      });
+      
+      randModeBtn.addEventListener("click", () => {
+        if (appState.isRandomMode) return;
+        appState.isRandomMode = true;
+        updateModeButtons();
+        prepareActivePool();
+        renderApp();
+        showToast("تم تفعيل نمط الخلط العشوائي للأسئلة", "info");
+      });
+      
+      // Initial state sync for modes
+      updateModeButtons();
+      
+      // 4. Dropdown category filters change event
+      const categoryFilter = document.getElementById("categoryFilter");
+      categoryFilter.value = appState.activeCategory;
+      
+      categoryFilter.addEventListener("change", (e) => {
+        const val = e.target.value;
+        
+        if (val === "bookmarked") {
+          const storedBookmarks = appState.bookmarks;
+          if (storedBookmarks.length === 0) {
+            showToast("قائمة المفضلة المرجعية فارغة حالياً!", "warning");
+            categoryFilter.value = appState.activeCategory; // reset back
+            return;
+          }
+        }
+        
+        appState.activeCategory = val;
+        appState.currentIndex = 0;
+        appState.save();
+        
+        prepareActivePool();
+        renderApp();
+        showToast(`تم تبديل الفئة المعروضة بنجاح`, "success");
+      });
+      
+      // 5. Global Reset Progression modal logic
+      const resetAppBtn = document.getElementById("resetAppBtn");
+      const resetModal = document.getElementById("resetModal");
+      const cancelResetBtn = document.getElementById("cancelResetBtn");
+      const confirmResetBtn = document.getElementById("confirmResetBtn");
+      
+      resetAppBtn.addEventListener("click", () => {
+        resetModal.classList.remove("hidden");
+        setTimeout(() => {
+          resetModal.classList.remove("opacity-0");
+          resetModal.querySelector(".transform").classList.remove("scale-95");
+        }, 50);
+      });
+      
+      function hideResetModal() {
+        resetModal.classList.add("opacity-0");
+        resetModal.querySelector(".transform").classList.add("scale-95");
+        setTimeout(() => {
+          resetModal.classList.add("hidden");
+        }, 300);
+      }
+      
+      cancelResetBtn.addEventListener("click", hideResetModal);
+      
+      confirmResetBtn.addEventListener("click", () => {
+        appState.reset();
+        categoryFilter.value = "all";
+        updateModeButtons();
+        hideResetModal();
+        prepareActivePool();
+        renderApp();
+        showToast("تمت إعادة ضبط جميع بيانات التقدم والعلامات المرجعية بنجاح بنسبة 100%", "success");
+      });
+      
+      // Close modal on overlay tap safely
+      resetModal.addEventListener("click", (e) => {
+        if (e.target === resetModal) hideResetModal();
+      });
+      
+      // 6. Hint Trigger click
+      document.getElementById("hintBtn").addEventListener("click", () => {
+        const q = appState.activePool[appState.currentIndex];
+        if (!q) return;
+        showToast(`تلميح: ${q.hint}`, "warning");
+      });
+      
+      // 7. Next Question transition navigation
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        const total = appState.activePool.length;
+        if (appState.currentIndex < total - 1) {
+          appState.currentIndex++;
+          appState.save();
+          renderApp();
+        } else {
+          // If was last question, rendering loop handles showing complete section
+          appState.currentIndex++;
+          appState.save();
+          renderApp();
+        }
+      });
+      
+      // 8. Finished state Section actions
+      document.getElementById("restartSectionBtn").addEventListener("click", () => {
+        // Only clear answered state for active pool to let them reuse the chapter cleanly
+        appState.activePool.forEach(q => {
+          delete appState.answeredMap[q.id];
+        });
+        
+        appState.currentIndex = 0;
+        appState.save();
+        renderApp();
+        showToast("تمت إعادة تهيئة القسم الحالي للتدرب مجدداً", "success");
+      });
+      
+      document.getElementById("backToAllBtn").addEventListener("click", () => {
+        appState.activeCategory = "all";
+        categoryFilter.value = "all";
+        appState.currentIndex = 0;
+        appState.save();
+        prepareActivePool();
+        renderApp();
+        showToast("تم العودة لعرض جميع الفصول المتاحة", "info");
+      });
+    }
+
+    // App controller initializer
+    window.addEventListener("DOMContentLoaded", () => {
+      appState.load();
+      prepareActivePool();
+      initializeEvents();
+      renderApp();
+    });
+  </script>
+</body>
+</html>
